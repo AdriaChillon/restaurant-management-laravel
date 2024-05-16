@@ -45,10 +45,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        if($user->name === 'admin') {
-            return redirect()->route('productos.index');
-        } else {
-            return redirect()->route('camarero.index');
-        }
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

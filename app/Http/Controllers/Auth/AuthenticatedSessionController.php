@@ -29,12 +29,20 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
     
         $user = Auth::user();
-    
-        if ($user->name === 'admin') {
-            return redirect()->route('productos.index');
-        } else {
+        
+        // Verificar y redirigir según el rol del usuario
+        if ($user->roles->contains('name', 'admin')) {
+            return redirect()->route('admin.index');
+        } elseif ($user->roles->contains('name', 'barra')) {
+            return redirect()->route('barra.index');
+        } elseif ($user->roles->contains('name', 'cocina')) {
+            return redirect()->route('cocinero.index');
+        } elseif ($user->roles->contains('name', 'camarero')) {
             return redirect()->route('camarero.index');
         }
+
+        // Redirigir a una ruta por defecto si el usuario no tiene ningún rol específico
+        return redirect()->route('/dashboard');
     }
 
     /**
