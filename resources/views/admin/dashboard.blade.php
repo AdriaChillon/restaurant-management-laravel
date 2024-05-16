@@ -1,35 +1,17 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Dashboard') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-    <div class="container mx-auto mt-8">
-        <div class="py-8">
-            <h2 class="text-2xl font-semibold text-gray-900 text-center mb-8">Asignar Roles</h2>
-            
-            <form action="{{ route('admin.assign-role') }}" method="POST" class="mx-auto w-full max-w-md">
-                @csrf
-                
-                <div class="mb-4">
-                    <label for="user" class="block text-sm font-medium text-gray-700">Usuario</label>
-                    <select id="user" name="user_id" class="mt-1 block w-full p-2 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                        @foreach ($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                        @endforeach
-                    </select>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    {{ __("You're logged in!") }}
                 </div>
-                
-                <div class="mb-4">
-                    <label for="role" class="block text-sm font-medium text-gray-700">Rol</label>
-                    <select id="role" name="role" class="mt-1 block w-full p-2 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                        @foreach ($roles as $role)
-                            <option value="{{ $role->name }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                
-                <div>
-                    <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Asignar Rol</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-@endsection
+</x-app-layout>

@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
         
         // Verificar y redirigir según el rol del usuario
         if ($user->roles->contains('name', 'admin')) {
-            return redirect()->route('admin.index');
+            return redirect()->route('admin.dashboard');
         } elseif ($user->roles->contains('name', 'barra')) {
             return redirect()->route('barra.index');
         } elseif ($user->roles->contains('name', 'cocina')) {

@@ -10,6 +10,7 @@ use App\Http\Controllers\ComandaController;
 use App\Http\Controllers\MesaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,10 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+    //Rutas para los roles
+    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+    Route::put('/roles/{user}/update', [RoleController::class, 'updateRoles'])->name('roles.update');
     
     // Rutas para Producto
     Route::resource('productos', ProductoController::class)->except(['show']);
@@ -44,10 +49,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Rutas para Comanda
     Route::resource('comandas', ComandaController::class)->except(['create', 'store', 'show']);
 
-     // Ruta para asignar roles
-     Route::post('/assign-role', [AdminDashboardController::class, 'assignRole'])->name('admin.assign-role');
 });
-
 
 // Rutas para barra
 Route::middleware(['auth', 'role:barra|admin'])->group(function () {
