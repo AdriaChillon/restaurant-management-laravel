@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\BarraController;
 use App\Http\Controllers\CamareroController;
 use App\Http\Controllers\CategoriaController;
@@ -28,7 +29,8 @@ Route::get('/dashboard', function () {
 
 // Rutas accesibles por el admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin', [ProductoController::class, 'index'])->name('admin.index');
+    
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     
     // Rutas para Producto
     Route::resource('productos', ProductoController::class)->except(['show']);
@@ -41,7 +43,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     
     // Rutas para Comanda
     Route::resource('comandas', ComandaController::class)->except(['create', 'store', 'show']);
+
+     // Ruta para asignar roles
+     Route::post('/assign-role', [AdminDashboardController::class, 'assignRole'])->name('admin.assign-role');
 });
+
 
 // Rutas para barra
 Route::middleware(['auth', 'role:barra|admin'])->group(function () {
