@@ -8,13 +8,19 @@ use App\Models\Mesa;
 
 class ComandaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $comandas = Comanda::with('mesa')->get();
+        $comandas = Comanda::with('mesa');
+
+        // Filtrar por fecha si se proporciona
+        if ($request->has('fecha')) {
+            $comandas->whereDate('fecha_hora', $request->fecha);
+        }
+
+        $comandas = $comandas->get();
         $mesas = Mesa::all();
         return view('admin.comandas.index', compact('comandas', 'mesas'));
     }
-
     public function create()
     {
         $mesas = Mesa::all();

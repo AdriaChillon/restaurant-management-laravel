@@ -1,37 +1,43 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Mesas</h1>
-    <a href="{{ route('mesas.create') }}" class="btn btn-primary mb-3">Agregar Mesa</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Número</th>
-                <th>Capacidad</th>
-                <th>Ubicación</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($mesas as $mesa)
-            <tr>
-                <td>{{ $mesa->mesa_id }}</td>
-                <td>{{ $mesa->numero }}</td>
-                <td>{{ $mesa->capacidad }}</td>
-                <td>{{ $mesa->ubicacion }}</td>
-                <td>
-                    <a href="{{ route('mesas.edit', $mesa) }}" class="btn btn-sm btn-primary">Editar</a>
-                    <form action="{{ route('mesas.destroy', $mesa) }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta mesa?')">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-semibold mb-8">Mesas</h1>
+    <div class="mb-6">
+        <a href="{{ route('mesas.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">Agregar Mesa</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full table-auto">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">ID</th>
+                    <th class="py-3 px-6 text-left">Número</th>
+                    <th class="py-3 px-6 text-left">Capacidad</th>
+                    <th class="py-3 px-6 text-left">Ubicación</th>
+                    <th class="py-3 px-6 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+                @foreach($mesas as $mesa)
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left">{{ $mesa->mesa_id }}</td>
+                    <td class="py-3 px-6 text-left">{{ $mesa->numero }}</td>
+                    <td class="py-3 px-6 text-left">{{ $mesa->capacidad }}</td>
+                    <td class="py-3 px-6 text-left">{{ $mesa->ubicacion }}</td>
+                    <td class="py-3 px-6 text-center">
+                        <div class="flex justify-center items-center">
+                            <a href="{{ route('mesas.edit', $mesa) }}" class="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">Editar</a>
+                            <form action="{{ route('mesas.destroy', $mesa) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded" onclick="return confirm('¿Estás seguro de que deseas eliminar esta mesa?')">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection

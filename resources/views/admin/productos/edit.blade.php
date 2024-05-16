@@ -1,38 +1,35 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Editar Producto</h1>
-    <form action="{{ route('productos.update', $producto->id) }}" method="POST">
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-semibold mb-8">Editar Producto</h1>
+    <form action="{{ route('productos.update', $producto->id) }}" method="POST" class="max-w-lg">
         @csrf
         @method('PUT')
-        <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $producto->nombre }}" required>
+        <div class="mb-4">
+            <label for="nombre" class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
+            <input type="text" class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2 w-full" id="nombre" name="nombre" value="{{ $producto->nombre }}" required>
         </div>
-        <div class="form-group">
-            <label for="precio">Precio</label>
-            <input type="number" step="0.01" class="form-control" id="precio" name="precio" value="{{ $producto->precio }}" required>
+        <div class="mb-4">
+            <label for="precio" class="block text-gray-700 text-sm font-bold mb-2">Precio</label>
+            <input type="number" step="0.01" class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2 w-full" id="precio" name="precio" value="{{ $producto->precio }}" required>
         </div>
-        <div class="form-group">
-            <label for="descripcion">Descripción</label>
-            <textarea class="form-control" id="descripcion" name="descripcion">{{ $producto->descripcion }}</textarea>
+        <div class="mb-4">
+            <label for="descripcion" class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
+            <textarea class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2 w-full" id="descripcion" name="descripcion">{{ $producto->descripcion }}</textarea>
         </div>
-        <div class="form-group">
-            <label for="categoria_id">Categoría</label>
-            <select class="form-control" id="categoria_id" name="categoria_id" required>
+        <div class="mb-4">
+            <label for="categoria_id" class="block text-gray-700 text-sm font-bold mb-2">Categoría</label>
+            <select class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2 w-full" id="categoria_id" name="categoria_id" required>
                 @foreach($categorias as $categoria)
-                    <option value="{{ $categoria->id }}" 
-                        @if($producto->categoria_id == $categoria->id)
-                            selected
-                        @endif
-                    >
-                        {{ $categoria->nombre }}
-                    </option>
+                <option value="{{ $categoria->id }}" @if($producto->categoria_id == $categoria->id) selected @endif>{{ $categoria->nombre }}</option>
                 @endforeach
             </select>
-        </div>             
-        <button type="submit" class="btn btn-primary">Actualizar Producto</button>
+        </div>
+        <div class="flex justify-end">
+            <a href="{{ route('productos.index') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded mr-4">Cancelar</a>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Actualizar Producto</button>
+        </div>
     </form>
 </div>
 @endsection
