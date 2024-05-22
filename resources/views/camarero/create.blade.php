@@ -3,6 +3,19 @@
 @section('content')
 <div class="container mx-auto px-4">
     <h2 class="text-2xl font-bold mb-6">Crear Comanda</h2>
+    
+    @if(session('success'))
+    <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        {{ session('success') }}
+    </div>
+    @endif
+    
+    @if(session('error'))
+    <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        {{ session('error') }}
+    </div>
+    @endif
+    
     <form action="{{ route('camarero.store') }}" method="POST">
         @csrf
         <div class="mb-4">
@@ -20,7 +33,7 @@
                 <button @click="open = !open" type="button" class="flex justify-between items-center w-full p-3 text-left text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
                     <span>{{ $categoria->nombre }}</span>
                     <svg class="w-5 h-5" x-bind:class="{ 'transform rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </button>
                 <div x-show="open" class="mt-2 bg-white shadow overflow-hidden rounded-md">
@@ -45,10 +58,10 @@
     </form>
 </div>
 <script>
-        setTimeout(() => {
-            window.Echo.channel('sendComandas').listen('ComandaUpdated', (e) => {
-                console.log(e)
-            })
-        }, 200)
-    </script>
+    setTimeout(() => {
+        window.Echo.channel('sendComandas').listen('ComandaUpdated', (e) => {
+            console.log(e)
+        })
+    }, 200)
+</script>
 @endsection

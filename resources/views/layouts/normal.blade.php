@@ -22,11 +22,6 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-white">
-        <!-- Navigation with Profile Info -->
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            @include('layouts.navigationNormal') <!-- Assumption: Profile Info is part of this include -->
-        </div>
-
         <!-- Page Content -->
         <main class="py-4">
             @yield('content')
