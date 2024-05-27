@@ -42,13 +42,11 @@
                                 @csrf
                                 @method('PUT')
                                 <!-- Agregar roles seleccionables con checkboxes -->
-                                @foreach ($roles->skip(1) as $role)
+                                @foreach ($roles as $role)
                                 <div class="flex items-center">
-                                    <input type="checkbox" name="roles[]" value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'checked' : '' }} class="form-checkbox h-5 w-5 text-blue-600">
-                                    <span class="ml-2">{{ $role->name }}</span>
+                                    <input type="checkbox" name="roles[]" value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'checked' : '' }} class="form-checkbox h-5 w-5 text-blue-600"><span class="ml-2">{{ $role->name }}</span>
                                 </div>
                                 @endforeach
-
                                 <br>
                                 <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow">Actualizar Rol</button>
                             </form>
