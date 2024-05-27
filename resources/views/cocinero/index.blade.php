@@ -1,3 +1,4 @@
+<!-- cocinero.blade.php -->
 @extends(Auth::user()->hasRole('admin') ? 'layouts.app' : 'layouts.normal')
 
 @section('content')
@@ -13,11 +14,9 @@
             <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }}</li>
             @endforeach
         </ul>
-        <form action="{{ route('cocinero.cambiarEstado', $comanda->id) }}" method="POST" class="inline-block">
-            @csrf
-            @method('PUT')
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Terminada</button>
-        </form>
+        <br>
+        <!-- Agrega un botón para manejar la comanda -->
+        <a href="{{ route('cocinero.manejarComanda', $comanda->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Manejar Comanda</a>
     </div>
     @empty
     <p class="text-center">No hay comandas activas.</p>

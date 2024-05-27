@@ -1,17 +1,11 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.default')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
+@section('content')
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+        <h2 class="text-3xl font-bold text-white mb-6">Dashboard</h2>
+        <p class="text-lg text-gray-300 mb-4 ">Bienvenido a tu dashboard. No tienes roles asignados actualmente.</p>
+        <p class="text-lg text-gray-300">Contacta con el administrador para que te asigne los roles adecuados.</p>
     </div>
-</x-app-layout>
+</div>
+@endsection

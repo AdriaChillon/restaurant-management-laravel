@@ -57,6 +57,6 @@ class RegisteredUserController extends Controller
         }
 
         // Redirigir a una ruta por defecto si el usuario no tiene ningún rol específico
-        return redirect()->route('/dashboard');
+        return redirect()->route('dashboard');
     }
 }

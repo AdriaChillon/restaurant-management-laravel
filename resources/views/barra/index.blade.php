@@ -15,11 +15,14 @@
                 <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }}</li>
                 @endforeach
             </ul>
-            <form action="{{ route('barra.cobrar', $comanda->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('¿Estás seguro de cobrar esta comanda?')">Cobrar</button>
-            </form>
+            <div class="flex justify-between items-center mt-4">
+                <form action="{{ route('barra.cobrar', $comanda->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('¿Estás seguro de cobrar esta comanda?')">Cobrar</button>
+                </form>
+                <a href="{{ route('barra.manejarComanda', $comanda->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gestionar Comanda</a>
+            </div>
         </div>
         @empty
         <p class="text-center">No hay comandas pendientes de cobro.</p>

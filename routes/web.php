@@ -31,7 +31,7 @@ Route::get('/dashboard', function () {
 // Rutas accesibles por el admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
     
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboardAdmin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     //Rutas para los roles
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
@@ -55,6 +55,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:barra|admin'])->group(function () {
     Route::get('/barra', [BarraController::class, 'index'])->name('barra.index');
     Route::put('/barra/{id}/cobrar', [BarraController::class, 'cobrar'])->name('barra.cobrar');
+    Route::get('/barra/comanda/{comanda}', [BarraController::class, 'manejarComanda'])->name('barra.manejarComanda');
+    Route::put('/barra/comanda/{comanda}/actualizar-productos', [CocineroController::class, 'actualizarEstadoProductos'])->name('barra.actualizarEstadoProductos');
 });
 
 // Rutas para cocina
@@ -62,6 +64,9 @@ Route::middleware(['auth', 'role:cocina|admin'])->group(function () {
     Route::get('/cocinero', [CocineroController::class, 'index'])->name('cocinero.index');
     Route::put('/cocinero/{id}/cambiarEstado', [CocineroController::class, 'cambiarEstado'])->name('cocinero.cambiarEstado');
     Route::post('/comanda-updated', [CocineroController::class, 'handleComandaUpdated'])->name('comanda.updated');
+    Route::get('/cocinero/manejar-comanda/{comanda}', [CocineroController::class, 'manejarComanda'])->name('cocinero.manejarComanda');
+    Route::put('/cocinero/comanda/{comanda}/actualizar-productos',[CocineroController::class, 'actualizarEstadoProductos'])->name('cocinero.actualizarEstadoProductos');
+
 });
 
 // Rutas para camarero
