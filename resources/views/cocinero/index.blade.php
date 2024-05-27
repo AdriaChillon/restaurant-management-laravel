@@ -1,4 +1,3 @@
-<!-- cocinero.blade.php -->
 @extends(Auth::user()->hasRole('admin') ? 'layouts.app' : 'layouts.normal')
 
 @section('content')
@@ -15,8 +14,14 @@
             @endforeach
         </ul>
         <br>
-        <!-- Agrega un botón para manejar la comanda -->
-        <a href="{{ route('cocinero.manejarComanda', $comanda->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Manejar Comanda</a>
+        <div class="flex justify-between items-center mt-4">
+                <form action="{{ route('cocinero.cambiarEstado', $comanda->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('¿Estás seguro de cobrar esta comanda?')">Finalizada</button>
+                </form>
+                <a href="{{ route('cocinero.manejarComanda', $comanda->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gestionar Comanda</a>
+            </div>
     </div>
     @empty
     <p class="text-center">No hay comandas activas.</p>

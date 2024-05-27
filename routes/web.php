@@ -56,7 +56,7 @@ Route::middleware(['auth', 'role:barra|admin'])->group(function () {
     Route::get('/barra', [BarraController::class, 'index'])->name('barra.index');
     Route::put('/barra/{id}/cobrar', [BarraController::class, 'cobrar'])->name('barra.cobrar');
     Route::get('/barra/comanda/{comanda}', [BarraController::class, 'manejarComanda'])->name('barra.manejarComanda');
-    Route::put('/barra/comanda/{comanda}/actualizar-productos', [CocineroController::class, 'actualizarEstadoProductos'])->name('barra.actualizarEstadoProductos');
+    Route::put('/barra/comanda/{comanda}/actualizar-productos',[BarraController::class, 'actualizarEstadoProductos'])->name('barra.actualizarEstadoProductos');
 });
 
 // Rutas para cocina

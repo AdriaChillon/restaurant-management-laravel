@@ -16,7 +16,7 @@
             <p>Total: {{ number_format($comanda->precio_total, 2) }}€</p>
             <ul class="list-disc ml-6 mb-2">
                 @foreach($comanda->productos as $producto)
-                <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }} - Estado: {{ $producto->estado_preparacion === 'en_proceso' ? 'En proceso' : $producto->estado_preparacion }}</li> <!-- Corregido aquí -->
+                <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }} - Estado: {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : $producto->pivot->estado_preparacion }}</li> <!-- Corregido aquí -->
                 @endforeach
             </ul>
             <a href="{{ route('camarero.edit', $comanda->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Editar</a>

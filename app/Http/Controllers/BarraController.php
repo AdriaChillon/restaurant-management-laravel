@@ -30,7 +30,7 @@ class BarraController extends Controller
 
         // Filtrar los productos que sean de la categoría "Refrescos" o "Cafés"
         $productosFiltrados = $comanda->productos->filter(function ($producto) {
-            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
+            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafés';
         });
 
         return view('barra.manejar_comanda', compact('comanda', 'productosFiltrados'));
@@ -43,13 +43,16 @@ class BarraController extends Controller
             if ($producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafés') {
                 continue; // Saltar la actualización si el producto es de esas categorías
             }
-
+    
             // Verificar si se recibió el estado del producto en la solicitud
             if ($request->has('estado_preparacion_' . $producto->id)) {
-                $producto->update(['estado_preparacion' => $request->input('estado_preparacion_' . $producto->id)]);
+                $estadoPreparacion = $request->input('estado_preparacion_' . $producto->id);
+                // Actualizar el estado del producto en la tabla pivot
+                $comanda->productos()->updateExistingPivot($producto->id, ['estado_preparacion' => $estadoPreparacion]);
             }
         }
-
+    
         return redirect()->route('barra.index')->with('success', 'Estado de los productos actualizado.');
     }
+    
 }

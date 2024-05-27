@@ -18,9 +18,9 @@
                         <div>
                             <!-- Agrega un select para seleccionar el estado de preparación -->
                             <select name="estado_preparacion_{{ $producto->id }}" class="block w-32 py-1 px-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="pendiente" @if ($producto->estado_preparacion === 'pendiente') selected @endif>Pendiente</option>
-                                <option value="en_proceso" @if ($producto->estado_preparacion === 'en_proceso') selected @endif>En Proceso</option>
-                                <option value="listo" @if ($producto->estado_preparacion === 'listo') selected @endif>Listo</option>
+                                <option value="pendiente" @if ($producto->comanda_productos && $producto->comanda_productos->estado_preparacion === 'pendiente') selected @endif>Pendiente</option>
+                                <option value="en_proceso" @if ($producto->comanda_productos && $producto->comanda_productos->estado_preparacion === 'en_proceso') selected @endif>En Proceso</option>
+                                <option value="listo" @if ($producto->comanda_productos && $producto->comanda_productos->estado_preparacion === 'listo') selected @endif>Listo</option>
                             </select>
                         </div>
                     </li>
