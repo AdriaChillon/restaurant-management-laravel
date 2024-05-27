@@ -22,6 +22,15 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-white">
+         <!-- Logout Button -->
+         <div class="d-flex justify-content-end p-3">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
         <!-- Page Content -->
         <main class="py-4">
             @yield('content')

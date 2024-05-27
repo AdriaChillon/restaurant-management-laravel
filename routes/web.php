@@ -38,16 +38,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/roles/{user}/update', [RoleController::class, 'updateRoles'])->name('roles.update');
     
     // Rutas para Producto
-    Route::resource('productos', ProductoController::class)->except(['show']);
+    Route::resource('productos', ProductoController::class);
     
     // Rutas para Mesa
-    Route::resource('mesas', MesaController::class)->except(['show']);
+    Route::resource('mesas', MesaController::class);
     
     // Rutas para Categoria
-    Route::resource('categorias', CategoriaController::class)->except(['show']);
+    Route::resource('categorias', CategoriaController::class);
     
     // Rutas para Comanda
-    Route::resource('comandas', ComandaController::class)->except(['create', 'store', 'show']);
+    Route::resource('comandas', ComandaController::class);
 
 });
 

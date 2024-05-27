@@ -1,7 +1,7 @@
-@extends('layouts.normal')
+@extends(Auth::user()->hasRole('admin') ? 'layouts.app' : 'layouts.normal')
 
 @section('content')
-<div class="container">
+<div class="container mx-auto px-4">
     <h1 class="text-2xl font-bold mb-4">Comandas Activas</h1>
     @forelse ($comandas as $comanda)
     <div class="bg-white shadow-lg rounded-lg p-6 mb-4">
@@ -20,42 +20,16 @@
         </form>
     </div>
     @empty
-    <p>No hay comandas activas.</p>
+    <p class="text-center">No hay comandas activas.</p>
     @endforelse
 </div>
 <script>
-    // // Función para actualizar la vista del cocinero
-    // function actualizarVistaCocinero() {
-    //     // Obtener el token CSRF de la etiqueta meta CSRF
-    //     var csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-    //     // Agregar el token CSRF a la solicitud AJAX
-    //     $.ajax({
-    //         url: "{{ route('comanda.updated') }}",
-    //         method: 'POST',
-    //         headers: {
-    //             'X-CSRF-TOKEN': csrfToken
-    //         },
-    //         success: function(response) {
-    //             // Actualizar la vista del cocinero con la respuesta del servidor
-    //             $('#cocinero-container').html(response);
-    //         },
-    //         error: function(xhr, status, error) {
-    //             console.error('Error al actualizar la vista del cocinero:', error);
-    //         }
-    //     });
-    // }
-
-    // // Llamar a la función cada 10 segundos
-    // setInterval(actualizarVistaCocinero, 10000); // 10000 milisegundos = 10 segundos
-
     // Función para recargar la página cada 10 segundos
-function recargarPagina() {
-    location.reload(); // Esta función recarga la página
-}
+    function recargarPagina() {
+        location.reload(); // Esta función recarga la página
+    }
 
-// Llamar a la función para recargar la página cada 10 segundos
-setInterval(recargarPagina, 10000); // 10000 milisegundos = 10 segundos
-
+    // Llamar a la función para recargar la página cada 10 segundos
+    setInterval(recargarPagina, 10000); // 10000 milisegundos = 10 segundos
 </script>
 @endsection

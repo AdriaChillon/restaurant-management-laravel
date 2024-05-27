@@ -31,7 +31,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -45,6 +45,18 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Verificar y redirigir según el rol del usuario
+        if ($user->roles->contains('name', 'admin')) {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->roles->contains('name', 'barra')) {
+            return redirect()->route('barra.index');
+        } elseif ($user->roles->contains('name', 'cocina')) {
+            return redirect()->route('cocinero.index');
+        } elseif ($user->roles->contains('name', 'camarero')) {
+            return redirect()->route('camarero.index');
+        }
+
+        // Redirigir a una ruta por defecto si el usuario no tiene ningún rol específico
+        return redirect()->route('/dashboard');
     }
 }

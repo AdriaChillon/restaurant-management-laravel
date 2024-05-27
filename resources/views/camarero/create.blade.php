@@ -1,8 +1,8 @@
-@extends('layouts.normal')
+@extends(Auth::user()->hasRole('admin') ? 'layouts.app' : 'layouts.normal')
 
 @section('content')
 <div class="container mx-auto px-4">
-    <h2 class="text-2xl font-bold mb-6">Crear Comanda</h2>
+    <h2 class="text-2xl font-bold mb-6 text-center">Crear Comanda</h2>
     
     @if(session('success'))
     <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
@@ -54,7 +54,11 @@
             </div>
             @endforeach
         </div>
-        <button type="submit" class="mt-6 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md text-white font-bold">Guardar Comanda</button>
+        <div class="mt-6 text-center flex justify-between" >
+        <a href="{{ route('camarero.index') }}"
+                class="mr-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded">Cancelar</a>
+            <button type="submit"  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Guardar Comanda</button>
+        </div>
     </form>
 </div>
 <script>

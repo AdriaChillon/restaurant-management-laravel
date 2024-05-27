@@ -1,8 +1,8 @@
-@extends('layouts.normal')
+@extends(Auth::user()->hasRole('admin') ? 'layouts.app' : 'layouts.normal')
 
 @section('content')
 <div class="container mx-auto px-4">
-    <h2 class="text-2xl font-bold mb-6">Editar Comanda</h2>
+    <h2 class="text-2xl font-bold mb-6 text-center">Editar Comanda</h2>
     @if (session('success'))
     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
         {{ session('success') }}
@@ -44,12 +44,16 @@
                             <span class="text-sm font-semibold text-gray-900">{{ number_format($producto->precio, 2) }}€</span>
                         </li>
                         @endforeach
-                    </ul </div>
+                    </ul>
                 </div>
-                @endforeach
             </div>
-            <button type="submit" class="mt-6 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md text-white font-bold">Actualizar
-                Comanda</button>
+            @endforeach
+        </div>
+        <div class="mt-6 text-center flex justify-between" >
+        <a href="{{ route('camarero.index') }}"
+                class="mr-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded">Cancelar</a>
+            <button type="submit"  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Guardar Comanda</button>
+        </div>
     </form>
     @vite('resources/js/app.js')
 </div>

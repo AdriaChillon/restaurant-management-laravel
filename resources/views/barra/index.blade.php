@@ -1,8 +1,8 @@
-@extends('layouts.normal')
+@extends(Auth::user()->hasRole('admin') ? 'layouts.app' : 'layouts.normal')
 
 @section('content')
 <div class="container mx-auto px-4">
-    <h2 class="text-2xl font-bold mb-6">Comandas Pendientes de Cobro</h2>
+    <h2 class="text-2xl font-bold mb-6 text-center">Comandas Pendientes de Cobro</h2>
     <div class="space-y-4">
         @forelse ($comandas as $comanda)
         <div class="p-4 bg-white shadow rounded-lg">
@@ -18,11 +18,11 @@
             <form action="{{ route('barra.cobrar', $comanda->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('¿Estás seguro de cobrar esta comanda?')">Cobrar</button>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('¿Estás seguro de cobrar esta comanda?')">Cobrar</button>
             </form>
         </div>
         @empty
-        <p>No hay comandas pendientes de cobro.</p>
+        <p class="text-center">No hay comandas pendientes de cobro.</p>
         @endforelse
     </div>
 </div>
