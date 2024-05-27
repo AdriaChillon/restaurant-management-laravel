@@ -9,7 +9,7 @@ class BarraController extends Controller
 {
     public function index()
     {
-        $comandas = Comanda::where('pagado', false)->get();
+        $comandas = Comanda::where('en_marcha', false)->where('pagado', false)->get();
         return view('barra.index', compact('comandas'));
     }
 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Events\ComandaUpdated;
 use App\Models\Comanda;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class CocineroController extends Controller
@@ -27,8 +26,6 @@ class CocineroController extends Controller
 
     public function handleComandaUpdated(ComandaUpdated $event)
     {
-        // Aquí puedes manejar las actualizaciones necesarias en la vista del cocinero
-        // Por ejemplo, puedes cargar de nuevo todas las comandas activas y devolver la vista actualizada
         $comandas = Comanda::where('en_marcha', true)->get();
         return view('cocinero.index', compact('comandas'));
     }
