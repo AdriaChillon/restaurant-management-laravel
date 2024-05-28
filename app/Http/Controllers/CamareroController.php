@@ -13,9 +13,13 @@ class CamareroController extends Controller
     // Muestra todas las comandas activas
     public function index()
     {
-        $comandas = Comanda::where('en_marcha', true)->get();
+        $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
+            $query->withPivot('cantidad', 'estado_preparacion');
+        }])->where('en_marcha', true)->get();
+    
         return view('camarero.index', compact('comandas'));
     }
+    
 
     // Muestra el formulario para crear una nueva comanda
     public function create()

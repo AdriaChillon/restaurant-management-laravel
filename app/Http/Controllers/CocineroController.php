@@ -17,10 +17,19 @@ class CocineroController extends Controller
     public function cambiarEstado($id)
     {
         $comanda = Comanda::findOrFail($id);
-        $comanda->en_marcha = false;
-        $comanda->save();
-    
-        return redirect()->route('cocinero.index')->with('success', 'Estado de la comanda actualizado.');
+        
+        // Verificar si todos los productos están listos
+        $todosListos = $comanda->productos->every(function ($producto) {
+            return $producto->pivot->estado_preparacion === 'listo';
+        });
+
+        if ($todosListos) {
+            $comanda->en_marcha = false;
+            $comanda->save();
+            return redirect()->route('cocinero.index')->with('success', 'Estado de la comanda actualizado.');
+        } else {
+            return redirect()->route('cocinero.index')->with('error', 'No se puede finalizar la comanda hasta que todos los productos estén listos.');
+        }
     }
 
     public function manejarComanda(Comanda $comanda)
@@ -50,4 +59,3 @@ class CocineroController extends Controller
         return redirect()->route('cocinero.index')->with('success', 'Estado de la comanda actualizado.');
     }
 }
-
