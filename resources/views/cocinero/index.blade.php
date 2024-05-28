@@ -3,7 +3,6 @@
 @section('content')
 <!-- Incluye SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <div class="container mx-auto px-4">
 @if (session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
