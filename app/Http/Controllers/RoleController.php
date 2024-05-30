@@ -8,9 +8,23 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        $query = User::query();
+
+        // Búsqueda por nombre
+        if ($request->has('search') && $request->input('search') != '') {
+            $query->where('name', 'like', '%' . $request->input('search') . '%');
+        }
+
+        // Búsqueda por rol
+        if ($request->has('role') && $request->input('role') != '') {
+            $query->whereHas('roles', function($q) use ($request) {
+                $q->where('name', $request->input('role'));
+            });
+        }
+
+        $users = $query->get();
         $roles = Role::all();
 
         return view('admin.roles.index', compact('users', 'roles'));

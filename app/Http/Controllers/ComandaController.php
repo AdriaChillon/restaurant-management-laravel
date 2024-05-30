@@ -21,6 +21,7 @@ class ComandaController extends Controller
         $mesas = Mesa::all();
         return view('admin.comandas.index', compact('comandas', 'mesas'));
     }
+
     public function create()
     {
         $mesas = Mesa::all();
@@ -29,8 +30,7 @@ class ComandaController extends Controller
 
     public function edit(Comanda $comanda)
     {
-        $mesas = Mesa::all();
-        return view('admin.comandas.edit', compact('comanda', 'mesas'));
+        return response()->json($comanda);
     }
 
     public function update(Request $request, Comanda $comanda)
@@ -38,17 +38,16 @@ class ComandaController extends Controller
         // Verificar si el checkbox está marcado
         $enMarcha = $request->has('en_marcha') ? true : false;
         $pagado = $request->has('pagado') ? true : false;
-    
+
         // Actualizar los datos de la comanda
         $comanda->mesa_id = $request->mesa_id;
         $comanda->fecha_hora = $request->fecha_hora;
         $comanda->en_marcha = $enMarcha;
         $comanda->pagado = $pagado;
         $comanda->save();
-    
+
         return redirect()->route('comandas.index');
     }
-    
 
     public function destroy(Comanda $comanda)
     {

@@ -13,14 +13,29 @@ class CocineroController extends Controller
         $comandas = Comanda::where('en_marcha', true)->get();
         return view('cocinero.index', compact('comandas'));
     }
-    
+
+    // Cambia el estado de la comanda
     public function cambiarEstado($id)
     {
         $comanda = Comanda::findOrFail($id);
-        $comanda->en_marcha = false;
-        $comanda->save();
-    
-        return redirect()->route('cocinero.index')->with('success', 'Estado de la comanda actualizado.');
+
+        // Filtrar los productos que no sean de la categoría "Refrescos" o "Cafés"
+        $productosFiltrados = $comanda->productos->reject(function ($producto) {
+            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
+        });
+
+        // Verificar si todos los productos filtrados están listos
+        $todosListos = $productosFiltrados->every(function ($producto) {
+            return $producto->pivot->estado_preparacion === 'listo';
+        });
+
+        if ($todosListos) {
+            $comanda->en_marcha = false;
+            $comanda->save();
+            return redirect()->route('cocinero.index')->with('success', 'Estado de la comanda actualizado.');
+        } else {
+            return redirect()->route('cocinero.index')->with('error', 'No se puede finalizar la comanda hasta que todos los productos estén listos.');
+        }
     }
 
     public function manejarComanda(Comanda $comanda)
@@ -30,7 +45,7 @@ class CocineroController extends Controller
 
         // Filtrar los productos que no sean de la categoría "Refrescos" o "Cafés"
         $productosFiltrados = $comanda->productos->reject(function ($producto) {
-            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafés';
+            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
         });
 
         return view('cocinero.manejar_comanda', compact('comanda', 'productosFiltrados'));
@@ -46,8 +61,7 @@ class CocineroController extends Controller
                 $comanda->productos()->updateExistingPivot($producto->id, ['estado_preparacion' => $estadoPreparacion]);
             }
         }
-    
+
         return redirect()->route('cocinero.index')->with('success', 'Estado de la comanda actualizado.');
     }
 }
-

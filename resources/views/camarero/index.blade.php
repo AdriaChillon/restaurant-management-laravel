@@ -2,14 +2,14 @@
 
 @section('content')
 <div class="container mx-auto px-4">
-    <h2 class="text-2xl font-bold mb-6 text-center">Comandas Activas</h2>
+    <h2 class="text-2xl font-bold mb-4">Comandas Activas</h2>
     <div class="mt-6">
         <a href="{{ route('camarero.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Crear Comanda</a>
     </div>
     <br>
     <div class="space-y-4">
         @forelse ($comandas as $comanda)
-        <div class="p-4 bg-white shadow rounded-lg">
+        <div class="bg-white shadow-lg rounded-lg p-6 mb-4">
             <h3 class="text-lg font-semibold">Comanda #{{ $comanda->id }}</h3>
             <p>Mesa: {{ $comanda->mesa->numero }}</p>
             <p>Fecha y Hora: {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
@@ -19,7 +19,9 @@
                 <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }} - Estado: {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : $producto->pivot->estado_preparacion }}</li> <!-- Corregido aquí -->
                 @endforeach
             </ul>
-            <a href="{{ route('camarero.edit', $comanda->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Editar</a>
+            <div class="flex justify-between items-center mt-4">
+                <a href="{{ route('camarero.edit', $comanda->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Editar</a>
+            </div>
         </div>
         @empty
         <p class="text-center">No hay comandas activas.</p>

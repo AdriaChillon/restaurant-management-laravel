@@ -23,6 +23,7 @@ class Comanda extends Model
 
     public function productos()
     {
-        return $this->belongsToMany(Producto::class, 'comanda_productos')->withPivot('cantidad');
+        return $this->belongsToMany(Producto::class, 'comanda_productos')->withPivot('cantidad', 'estado_preparacion');
     }
+    
 }
