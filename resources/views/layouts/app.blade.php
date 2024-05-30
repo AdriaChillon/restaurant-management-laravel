@@ -13,8 +13,6 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
 
     <!-- Scripts -->
@@ -24,7 +22,7 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-white">
         <!-- Navigation with Profile Info -->
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class=" w-full mx-auto">
             @include('layouts.navigation') <!-- Assumption: Profile Info is part of this include -->
         </div>
 

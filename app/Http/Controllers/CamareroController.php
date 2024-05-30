@@ -34,10 +34,13 @@ class CamareroController extends Controller
     // Muestra el formulario para crear una nueva comanda
     public function create()
     {
-        $mesas = Mesa::all();
+        // Obtener las mesas que no tienen ninguna comanda activa
+        $mesasOcupadas = Comanda::where('pagado', false)->pluck('mesa_id');
+        $mesas = Mesa::whereNotIn('id', $mesasOcupadas)->get();
         $categorias = Categoria::with('productos')->get();
         return view('camarero.create', compact('mesas', 'categorias'));
     }
+    
 
     public function store(Request $request)
     {
