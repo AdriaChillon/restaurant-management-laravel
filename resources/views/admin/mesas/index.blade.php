@@ -10,7 +10,6 @@
         <table class="min-w-full table-auto">
             <thead>
                 <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 text-left">ID</th>
                     <th class="py-3 px-6 text-left">Número</th>
                     <th class="py-3 px-6 text-left">Capacidad</th>
                     <th class="py-3 px-6 text-left">Ubicación</th>
@@ -20,7 +19,6 @@
             <tbody class="text-gray-600 text-sm font-light">
                 @foreach($mesas as $mesa)
                 <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left">{{ $mesa->mesa_id }}</td>
                     <td class="py-3 px-6 text-left">{{ $mesa->numero }}</td>
                     <td class="py-3 px-6 text-left">{{ $mesa->capacidad }}</td>
                     <td class="py-3 px-6 text-left">{{ $mesa->ubicacion }}</td>

@@ -39,7 +39,7 @@ class BarraController extends Controller
 
         // Filtrar los productos que sean de la categoría "Refrescos" o "Cafés"
         $productosFiltrados = $comanda->productos->filter(function ($producto) {
-            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafés';
+            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
         });
 
         return view('barra.manejar_comanda', compact('comanda', 'productosFiltrados'));
@@ -49,7 +49,7 @@ class BarraController extends Controller
     {
         foreach ($comanda->productos as $producto) {
             // Verificar si el producto es de la categoría Refrescos o Cafés
-            if ($producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafés') {
+            if ($producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes') {
                 // Verificar si se recibió el estado del producto en la solicitud
                 if ($request->has('estado_preparacion_' . $producto->id)) {
                     $estadoPreparacion = $request->input('estado_preparacion_' . $producto->id);
