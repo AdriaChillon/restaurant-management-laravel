@@ -34,6 +34,7 @@ class BarraController extends Controller
 
         if ($comanda->en_marcha == false && $todosListos) {
             $comanda->pagado = true;
+            $comanda->en_marcha = false;
             $comanda->save();
 
             return redirect()->route('barra.index')->with('success', 'Comanda cobrada con éxito.');

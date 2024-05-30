@@ -57,11 +57,4 @@
     </form>
     @vite('resources/js/app.js')
 </div>
-<!-- <script>
-    setTimeout(() => {
-        window.Echo.channel('sendComandas').listen('ComandaUpdated', (e) => {
-            console.log(e)
-        })
-    }, 200)
-</script> -->
 @endsection

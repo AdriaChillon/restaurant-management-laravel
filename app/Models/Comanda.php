@@ -26,4 +26,19 @@ class Comanda extends Model
         return $this->belongsToMany(Producto::class, 'comanda_productos')->withPivot('cantidad', 'estado_preparacion');
     }
     
+     // Add the accessor
+     protected $appends = ['desactivada'];
+
+     public function getDesactivadaAttribute()
+     {
+         // Filtrar los productos que no sean de la categoría "Refrescos" o "Cafés"
+         $productosFiltrados = $this->productos->reject(function ($producto) {
+             return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
+         });
+ 
+         // Verificar si todos los productos filtrados están listos
+         return $productosFiltrados->every(function ($producto) {
+             return $producto->pivot->estado_preparacion === 'listo';
+         });
+     }
 }
