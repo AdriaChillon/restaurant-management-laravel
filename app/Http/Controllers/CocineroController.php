@@ -14,6 +14,16 @@ class CocineroController extends Controller
         return view('cocinero.index', compact('comandas'));
     }
 
+    // Devuelve las comandas activas en formato JSON
+    public function getActiveComandas()
+    {
+        $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
+            $query->withPivot('cantidad', 'estado_preparacion');
+        }])->where('en_marcha', true)->get();
+        
+        return response()->json($comandas);
+    }
+
     // Cambia el estado de la comanda
     public function cambiarEstado($id)
     {

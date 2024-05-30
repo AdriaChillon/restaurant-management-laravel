@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Events\ComandaUpdated;
@@ -10,16 +11,25 @@ use Illuminate\Http\Request;
 
 class CamareroController extends Controller
 {
-    // Muestra todas las comandas activas
+    // Muestra todas las comandas activas hasta que sean pagadas
     public function index()
     {
         $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
             $query->withPivot('cantidad', 'estado_preparacion');
-        }])->where('en_marcha', true)->get();
+        }])->where('pagado', false)->get();
     
         return view('camarero.index', compact('comandas'));
     }
     
+    // Devuelve las comandas activas en formato JSON hasta que sean pagadas
+    public function getActiveComandas()
+    {
+        $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
+            $query->withPivot('cantidad', 'estado_preparacion');
+        }])->where('pagado', false)->get();
+
+        return response()->json($comandas);
+    }
 
     // Muestra el formulario para crear una nueva comanda
     public function create()

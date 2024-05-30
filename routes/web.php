@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:barra|admin'])->group(function () {
     Route::put('/barra/{id}/cobrar', [BarraController::class, 'cobrar'])->name('barra.cobrar');
     Route::get('/barra/comanda/{comanda}', [BarraController::class, 'manejarComanda'])->name('barra.manejarComanda');
     Route::put('/barra/comanda/{comanda}/actualizar-productos',[BarraController::class, 'actualizarEstadoProductos'])->name('barra.actualizarEstadoProductos');
+    Route::get('barra/getPendingComandas', [BarraController::class, 'getPendingComandas'])->name('barra.getPendingComandas');
 });
 
 // Rutas para cocina
@@ -66,6 +67,7 @@ Route::middleware(['auth', 'role:cocina|admin'])->group(function () {
     Route::post('/comanda-updated', [CocineroController::class, 'handleComandaUpdated'])->name('comanda.updated');
     Route::get('/cocinero/manejar-comanda/{comanda}', [CocineroController::class, 'manejarComanda'])->name('cocinero.manejarComanda');
     Route::put('/cocinero/comanda/{comanda}/actualizar-productos',[CocineroController::class, 'actualizarEstadoProductos'])->name('cocinero.actualizarEstadoProductos');
+    Route::get('cocinero/getActiveComandas', [CocineroController::class, 'getActiveComandas'])->name('cocinero.getActiveComandas');
 
 });
 
@@ -76,6 +78,7 @@ Route::middleware(['auth', 'role:camarero|admin'])->group(function () {
     Route::post('/camarero', [CamareroController::class, 'store'])->name('camarero.store');
     Route::get('/camarero/{id}/edit', [CamareroController::class, 'edit'])->name('camarero.edit');
     Route::put('/camarero/{id}', [CamareroController::class, 'update'])->name('camarero.update');
+    Route::get('camarero/getActiveComandas', [App\Http\Controllers\CamareroController::class, 'getActiveComandas'])->name('camarero.getActiveComandas');
 });
 
 // Rutas accesibles por cualquier usuario autenticado

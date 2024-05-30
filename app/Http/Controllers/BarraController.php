@@ -13,6 +13,16 @@ class BarraController extends Controller
         return view('barra.index', compact('comandas'));
     }
 
+    // Devuelve las comandas pendientes de cobro en formato JSON
+    public function getPendingComandas()
+    {
+        $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
+            $query->withPivot('cantidad', 'estado_preparacion');
+        }])->where('pagado', false)->get();
+
+        return response()->json($comandas);
+    }
+
     public function cobrar($id)
     {
         $comanda = Comanda::findOrFail($id);

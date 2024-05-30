@@ -17,9 +17,9 @@
         </div>
     @endif
     <h2 class="text-2xl font-bold mb-4">Comandas Pendientes de Cobro</h2>
-    <div class="space-y-4">
+    <div id="comandas-container" class="space-y-4">
         @forelse ($comandas as $comanda)
-        <div class="bg-white shadow-lg rounded-lg p-6 mb-4">
+        <div class="bg-white shadow-lg rounded-lg p-6 mb-4 comanda" data-comanda-id="{{ $comanda->id }}">
             <h3 class="text-lg font-semibold">Comanda #{{ $comanda->id }}</h3>
             <p>Mesa: {{ $comanda->mesa->numero }}</p>
             <p>Fecha y Hora: {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
@@ -33,7 +33,7 @@
                 <form class="form-cobrar" action="{{ route('barra.cobrar', $comanda->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Marcar como pagada</button>
+                    <button type="button" class="btn-cobrar bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Marcar como pagada</button>
                 </form>
                 <a href="{{ route('barra.manejarComanda', $comanda->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gestionar Comanda</a>
             </div>
@@ -44,33 +44,75 @@
     </div>
 </div>
 <script>
-    // Función para recargar la página cada 10 segundos
-    function recargarPagina() {
-        location.reload(); // Esta función recarga la página
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        function recargarComandas() {
+            fetch("{{ route('barra.getPendingComandas') }}")
+                .then(response => response.json())
+                .then(data => {
+                    const comandasContainer = document.getElementById('comandas-container');
+                    comandasContainer.innerHTML = '';
+                    data.forEach(comanda => {
+                        const comandaHtml = `
+                            <div class="bg-white shadow-lg rounded-lg p-6 mb-4 comanda" data-comanda-id="${comanda.id}">
+                                <h3 class="text-lg font-semibold">Comanda #${comanda.id}</h3>
+                                <p>Mesa: ${comanda.mesa.numero}</p>
+                                <p>Fecha y Hora: ${new Date(comanda.fecha_hora).toLocaleString()}</p>
+                                <ul class="list-disc ml-6 mb-2">
+                                    ${comanda.productos.map(producto => `
+                                        <li>${producto.nombre} - Cantidad: ${producto.pivot.cantidad} - Estado: ${producto.pivot.estado_preparacion === 'en_proceso' ? 'En proceso' : capitalizeFirstLetter(producto.pivot.estado_preparacion)}</li>
+                                    `).join('')}
+                                </ul>
+                                <p>Total: <b>${comanda.precio_total.toFixed(2)}€</b></p>
+                                <div class="flex justify-between items-center mt-4">
+                                    <form class="form-cobrar" action="/barra/${comanda.id}/cobrar" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="button" class="btn-cobrar bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Marcar como pagada</button>
+                                    </form>
+                                    <a href="/barra/${comanda.id}/manejarComanda" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gestionar Comanda</a>
+                                </div>
+                            </div>
+                        `;
+                        comandasContainer.innerHTML += comandaHtml;
+                    });
 
-    // Llamar a la función para recargar la página cada 10 segundos
-    setInterval(recargarPagina, 10000); // 10000 milisegundos = 10 segundos
+                    // Rebind event listeners to the newly added elements
+                    bindCobrarButtons();
+                })
+                .catch(error => console.error('Error al recargar las comandas:', error));
+        }
 
-    // Manejar la confirmación del botón "Marcar como pagada" con SweetAlert2
-    document.querySelectorAll('.form-cobrar').forEach(function(form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¡No podrás revertir esto!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, cobrar!',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+        function bindCobrarButtons() {
+            document.querySelectorAll('.btn-cobrar').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const form = this.closest('.form-cobrar');
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¡No podrás revertir esto!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, cobrar!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
             });
-        });
+        }
+
+        // Llamar a la función para recargar las comandas cada 10 segundos
+        setInterval(recargarComandas, 10000);
+
+        // Llamar a bindCobrarButtons para los botones existentes en la carga inicial
+        bindCobrarButtons();
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
     });
 </script>
 @endsection
