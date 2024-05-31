@@ -15,8 +15,13 @@
     @endif
     <h1 class="text-2xl font-bold mb-4">Comandas Activas</h1>
     <div id="comandas-container">
-        @foreach ($comandas as $comanda)
-            <div class="bg-white shadow-lg rounded-lg p-6 mb-4 comanda {{ $comanda->desactivada ? 'opacity-50 pointer-events-none' : '' }}" data-comanda-id="{{ $comanda->id }}">
+        @php
+            $comandas_activas = $comandas->where('desactivada', false);
+            $comandas_completadas = $comandas->where('desactivada', true);
+        @endphp
+
+        @foreach ($comandas_activas as $comanda)
+            <div class="bg-white shadow-lg rounded-lg p-6 mb-4 comanda" data-comanda-id="{{ $comanda->id }}">
                 <h2 class="text-lg font-semibold mb-2">Comanda #{{ $comanda->id }}</h2>
                 <p class="mb-2">Mesa: {{ $comanda->mesa->numero }}</p>
                 <p class="mb-2">Fecha y Hora: {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
@@ -27,11 +32,27 @@
                     @endforeach
                 </ul>
                 <p>Total: <b>{{ number_format($comanda->precio_total, 2) }}€</b></p>
-                @if(!$comanda->desactivada)
-                    <div class="flex justify-between items-center mt-4">
-                        <a href="{{ route('cocinero.manejarComanda', ['comanda' => $comanda->id]) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gestionar Comanda</a>
-                    </div>
-                @endif
+                <div class="flex justify-between items-center mt-4">
+                    <a href="{{ route('cocinero.manejarComanda', ['comanda' => $comanda->id]) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gestionar Comanda</a>
+                </div>
+            </div>
+        @endforeach
+
+        @foreach ($comandas_completadas as $comanda)
+            <div class="bg-white shadow-lg rounded-lg p-6 mb-4 comanda opacity-50 pointer-events-none" data-comanda-id="{{ $comanda->id }}">
+                <h2 class="text-lg font-semibold mb-2">Comanda #{{ $comanda->id }}</h2>
+                <p class="mb-2">Mesa: {{ $comanda->mesa->numero }}</p>
+                <p class="mb-2">Fecha y Hora: {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
+                <p class="mb-2">Productos:</p>
+                <ul class="list-disc ml-6 mb-2">
+                    @foreach($comanda->productos as $producto)
+                        <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }} - Estado: {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : ucfirst($producto->pivot->estado_preparacion) }}</li>
+                    @endforeach
+                </ul>
+                <p>Total: <b>{{ number_format($comanda->precio_total, 2) }}€</b></p>
+                <div class="flex justify-between items-center mt-4">
+                    <button class="bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed" disabled>Gestionar Comanda</button>
+                </div>
             </div>
         @endforeach
     </div>
