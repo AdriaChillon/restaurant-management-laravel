@@ -44,9 +44,6 @@
                             @endforeach
                         </ul>
                     </div>
-                    <div class="text-right">
-                        <button type="submit" class="mt-6 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md text-white font-bold">Guardar Cambios</button>
-                    </div>
                 </form>
                 <div class="flex justify-between items-center mt-4">
                     <form class="form-cobrar" action="{{ route('barra.cobrar', $comanda->id) }}" method="POST">
@@ -54,6 +51,7 @@
                         @method('PUT')
                         <button type="button" class="btn-cobrar bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Marcar como pagada</button>
                     </form>
+                    <button type="submit" class="mt-6 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md text-white font-bold">Guardar Cambios</button>
                 </div>
             </div>
         @endforeach

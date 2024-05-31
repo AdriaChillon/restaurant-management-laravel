@@ -92,14 +92,15 @@ class CamareroController extends Controller
         return redirect()->route('camarero.index')->with('success', 'Comanda creada con éxito.');
     }
 
-    // Muestra el formulario para editar una comanda existente
     public function edit($id)
     {
         $comanda = Comanda::with(['productos', 'mesa'])->findOrFail($id);
-        $mesas = Mesa::all();
+        $mesasOcupadas = Comanda::where('pagado', false)->pluck('mesa_id');
+        $mesas = Mesa::whereNotIn('id', $mesasOcupadas)->orWhere('id', $comanda->mesa_id)->get();
         $categorias = Categoria::with('productos')->get();
         return view('camarero.edit', compact('comanda', 'mesas', 'categorias'));
     }
+    
 
     // Actualiza una comanda existente
     public function update(Request $request, $id)
