@@ -25,16 +25,30 @@
                 <h2 class="text-lg font-semibold mb-2">Comanda #{{ $comanda->id }}</h2>
                 <p class="mb-2">Mesa: {{ $comanda->mesa->numero }}</p>
                 <p class="mb-2">Fecha y Hora: {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
-                <p class="mb-2">Productos:</p>
-                <ul class="list-disc ml-6 mb-2">
-                    @foreach($comanda->productos as $producto)
-                        <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }} - Estado: {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : ucfirst($producto->pivot->estado_preparacion) }}</li>
-                    @endforeach
-                </ul>
-                <p>Total: <b>{{ number_format($comanda->precio_total, 2) }}€</b></p>
-                <div class="flex justify-between items-center mt-4">
-                    <a href="{{ route('cocinero.manejarComanda', ['comanda' => $comanda->id]) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gestionar Comanda</a>
-                </div>
+                <form action="{{ route('cocinero.actualizarEstadoProductos', $comanda->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-2">
+                        <p class="font-semibold mb-1">Productos:</p>
+                        <ul>
+                            @foreach($comanda->productos->reject(function ($producto) { return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes'; }) as $producto)
+                            <li class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <select name="estado_preparacion_{{ $producto->id }}" class="block w-32 py-1 px-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                        <option value="pendiente" @if ($producto->pivot->estado_preparacion === 'pendiente') selected @endif>Pendiente</option>
+                                        <option value="en_proceso" @if ($producto->pivot->estado_preparacion === 'en_proceso') selected @endif>En Proceso</option>
+                                        <option value="listo" @if ($producto->pivot->estado_preparacion === 'listo') selected @endif>Listo</option>
+                                    </select>
+                                    <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }} - {{ ucfirst($producto->pivot->estado_preparacion) }}</span>
+                                </div>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="mt-6 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md text-white font-bold">Guardar Cambios</button>
+                    </div>
+                </form>
             </div>
         @endforeach
 
@@ -72,17 +86,30 @@
                                 <h2 class="text-lg font-semibold mb-2">Comanda #${comanda.id}</h2>
                                 <p class="mb-2">Mesa: ${comanda.mesa.numero}</p>
                                 <p class="mb-2">Fecha y Hora: ${new Date(comanda.fecha_hora).toLocaleString()}</p>
-                                <p class="mb-2">Productos:</p>
-                                <ul class="list-disc ml-6 mb-2">
-                                    ${comanda.productos.map(producto => `
-                                        <li>${producto.nombre} - Cantidad: ${producto.pivot.cantidad} - Estado: ${producto.pivot.estado_preparacion === 'en_proceso' ? 'En proceso' : capitalizeFirstLetter(producto.pivot.estado_preparacion)}</li>
-                                    `).join('')}
-                                </ul>
-                                <p>Total: <b>${comanda.precio_total.toFixed(2)}€</b></p>
-                                ${!comanda.desactivada ? `
-                                <div class="flex justify-between items-center mt-4">
-                                    <a href="/cocinero/manejar-comanda/${comanda.id}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Gestionar Comanda</a>
-                                </div>` : ''}
+                                <form action="/cocinero/actualizar-estado-productos/${comanda.id}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="mb-2">
+                                        <p class="font-semibold mb-1">Productos:</p>
+                                        <ul>
+                                            ${comanda.productos.filter(producto => producto.categoria.nombre !== 'Refrescos' && producto.categoria.nombre !== 'Cafes').map(producto => `
+                                            <li class="flex justify-between items-center mb-2">
+                                                <div class="flex items-center">
+                                                    <select name="estado_preparacion_${producto.id}" class="block w-32 py-1 px-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                                        <option value="pendiente" ${producto.pivot.estado_preparacion === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                                                        <option value="en_proceso" ${producto.pivot.estado_preparacion === 'en_proceso' ? 'selected' : ''}>En Proceso</option>
+                                                        <option value="listo" ${producto.pivot.estado_preparacion === 'listo' ? 'selected' : ''}>Listo</option>
+                                                    </select>
+                                                    <span class="ml-4">x${producto.pivot.cantidad} ${producto.nombre} - ${capitalizeFirstLetter(producto.pivot.estado_preparacion)}</span>
+                                                </div>
+                                            </li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                    <div class="text-right">
+                                        <button type="submit" class="mt-6 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md text-white font-bold">Guardar Cambios</button>
+                                    </div>
+                                </form>
                             </div>
                         `;
                         comandasContainer.innerHTML += comandaHtml;
