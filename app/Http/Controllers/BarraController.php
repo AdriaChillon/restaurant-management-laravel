@@ -32,7 +32,7 @@ class BarraController extends Controller
             return $producto->pivot->estado_preparacion === 'listo';
         });
 
-        if ($comanda->en_marcha == false && $todosListos) {
+        if ($todosListos) {
             $comanda->pagado = true;
             $comanda->en_marcha = false;
             $comanda->save();
