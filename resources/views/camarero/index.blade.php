@@ -16,7 +16,7 @@
             <p>Total: {{ number_format($comanda->precio_total, 2) }}€</p>
             <ul class="list-disc ml-6 mb-2">
                 @foreach($comanda->productos as $producto)
-                <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }} - Estado: {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : $producto->pivot->estado_preparacion }}</li>
+                <li>x{{ $producto->pivot->cantidad }} {{ $producto->nombre }} - Estado: {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : ucfirst($producto->pivot->estado_preparacion) }}</li>
                 @endforeach
             </ul>
             <div class="flex justify-between items-center mt-4">
@@ -44,7 +44,7 @@
                                 <p>Total: ${comanda.precio_total.toFixed(2)}€</p>
                                 <ul class="list-disc ml-6 mb-2">
                                     ${comanda.productos.map(producto => `
-                                        <li>${producto.nombre} - Cantidad: ${producto.pivot.cantidad} - Estado: ${producto.pivot.estado_preparacion === 'en_proceso' ? 'En proceso' : capitalizeFirstLetter(producto.pivot.estado_preparacion)}</li>
+                                        <li>x${producto.pivot.cantidad} ${producto.nombre} - Estado: ${producto.pivot.estado_preparacion === 'en_proceso' ? 'En proceso' : capitalizeFirstLetter(producto.pivot.estado_preparacion)}</li>
                                     `).join('')}
                                 </ul>
                                 <div class="flex justify-between items-center mt-4">
