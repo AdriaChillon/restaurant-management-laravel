@@ -15,4 +15,9 @@ class Categoria extends Model
     {
         return $this->hasMany(Producto::class);
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'categoria_role');
+    }
 }
