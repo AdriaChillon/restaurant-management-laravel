@@ -4,68 +4,72 @@ namespace App\Http\Controllers;
 
 use App\Models\Comanda;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BarraController extends Controller
 {
     public function index()
     {
-        $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
-            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones');
-        }])->where('pagado', false)->get();
+        $user = Auth::user();
+        $roles = $user->roles->pluck('id'); // Obtener los roles del usuario
+
+        $comandas = Comanda::with(['mesa', 'productos' => function ($query) use ($roles) {
+            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones')
+                  ->whereHas('categoria', function ($query) use ($roles) {
+                      $query->whereIn('id', function ($query) use ($roles) {
+                          $query->select('categoria_id')
+                                ->from('categoria_role')
+                                ->whereIn('role_id', $roles);
+                      });
+                  })
+                  ->whereHas('categoria', function ($query) {
+                      $query->whereIn('nombre', ['Refrescos', 'Cafes']);
+                  });
+        }])->where('en_marcha', true)
+            ->orderBy('en_marcha', 'desc')
+            ->orderBy('updated_at', 'asc')
+            ->get();
 
         return view('barra.index', compact('comandas'));
     }
 
     public function getPendingComandas()
     {
-        $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
-            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones');
-        }])->where('pagado', false)->get();
+        $user = Auth::user();
+        $roles = $user->roles->pluck('id'); // Obtener los roles del usuario
+
+        $comandas = Comanda::with(['mesa', 'productos' => function ($query) use ($roles) {
+            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones')
+                  ->whereHas('categoria', function ($query) use ($roles) {
+                      $query->whereIn('id', function ($query) use ($roles) {
+                          $query->select('categoria_id')
+                                ->from('categoria_role')
+                                ->whereIn('role_id', $roles);
+                      });
+                  })
+                  ->whereHas('categoria', function ($query) {
+                      $query->whereIn('nombre', ['Refrescos', 'Cafes']);
+                  });
+        }])->where('en_marcha', true)->get();
 
         return response()->json($comandas);
-    }
-
-    public function cobrar($id)
-    {
-        $comanda = Comanda::findOrFail($id);
-        
-        $todosListos = $comanda->productos->every(function ($producto) {
-            return $producto->pivot->estado_preparacion === 'listo';
-        });
-
-        if ($todosListos) {
-            $comanda->pagado = true;
-            $comanda->en_marcha = false;
-            $comanda->save();
-
-            return redirect()->route('barra.index')->with('success', 'Comanda cobrada con éxito.');
-        } else {
-            return redirect()->route('barra.index')->with('error', 'No se puede cobrar la comanda hasta que todos los productos estén listos.');
-        }
-    }
-
-    public function manejarComanda(Comanda $comanda)
-    {
-        $comanda->load('productos.categoria');
-
-        $productosFiltrados = $comanda->productos->filter(function ($producto) {
-            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
-        });
-
-        return view('barra.manejar_comanda', compact('comanda', 'productosFiltrados'));
     }
 
     public function actualizarEstadoProductos(Request $request, Comanda $comanda)
     {
         foreach ($comanda->productos as $producto) {
-            if ($producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes') {
-                if ($request->has('estado_preparacion_' . $producto->id)) {
-                    $estadoPreparacion = $request->input('estado_preparacion_' . $producto->id);
-                    $comanda->productos()->updateExistingPivot($producto->id, ['estado_preparacion' => $estadoPreparacion]);
-                }
+            if ($request->has('estado_preparacion_' . $producto->id)) {
+                $estadoPreparacion = $request->input('estado_preparacion_' . $producto->id);
+                $comanda->productos()->updateExistingPivot($producto->id, ['estado_preparacion' => $estadoPreparacion]);
             }
         }
 
-        return redirect()->route('barra.index')->with('success', 'Estado de los productos actualizado.');
+        return redirect()->route('barra.index')->with('success', 'Estado de la comanda actualizado.');
+    }
+
+    public function cobrar(Request $request, Comanda $comanda)
+    {
+        $comanda->update(['pagada' => true]);
+        return redirect()->route('barra.index')->with('success', 'Comanda marcada como pagada.');
     }
 }

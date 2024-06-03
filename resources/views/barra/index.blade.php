@@ -16,7 +16,7 @@
             </div>
             @endif
 
-            <h1 class="text-2xl font-bold mb-4">Comandas Pendientes de Cobro</h1>
+            <h1 class="text-2xl font-bold mb-4">Comandas Activas</h1>
             <div id="comandas-container" class="flex flex-wrap -mx-2">
                 @foreach ($comandas as $comanda)
                 <div class="border-2 border-[#253080] shadow-xl rounded-lg p-6 mb-4 mx-2 flex flex-col justify-between w-full md:w-1/2 lg:w-1/2 xl:w-1/2" data-comanda-id="{{ $comanda->id }}">
@@ -30,9 +30,7 @@
                             @csrf
                             @method('PUT')
                             <ul class="list-disc ml-6 mb-2">
-                                @foreach ($comanda->productos->filter(function ($producto) {
-                                return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
-                                }) as $producto)
+                                @foreach ($comanda->productos as $producto)
                                 <li class="flex justify-between items-center mb-2">
                                     <div class="flex items-center">
                                         <select name="estado_preparacion_{{ $producto->id }}" class="block w-48 py-1 px-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
@@ -40,13 +38,13 @@
                                             <option value="en_proceso" @if ($producto->pivot->estado_preparacion === 'en_proceso') selected @endif>En Proceso</option>
                                             <option value="listo" @if ($producto->pivot->estado_preparacion === 'listo') selected @endif>Listo</option>
                                         </select>
-                                        <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }} - {{ $producto->pivot->especificaciones ?: 'Ninguna' }}</span>
+                                        <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }} - {{ $producto->pivot->especificaciones }}</span>
                                     </div>
                                 </li>
                                 @endforeach
                             </ul>
                             <div class="flex justify-between items-center mt-4">
-                                <button type="submit" class="btn-guardar bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded">Guardar Cambios</button>
+                                <button type="submit" class="mt-6 px-4 py-2 bg-green-500 hover:bg-green-700 rounded-md text-white font-bold">Guardar Cambios</button>
                             </div>
                         </form>
                     </div>
@@ -76,7 +74,7 @@
                     comandasContainer.innerHTML = '';
                     data.forEach(comanda => {
                         const comandaHtml = `
-                        <div class="border-2 border-[#253080] shadow-xl rounded-lg p-6 mb-4 mx-2 flex flex-col justify-between w-full md:w-1/2 lg:w-1/2 xl:w-1/2" data-comanda-id="${comanda.id}">
+                        <div class="border-2 border-[#253080] shadow-xl rounded-lg p-6 mb-4 mx-2 flex flex-col justify-between w-full md:w-1/2 lg:w-1/2 xl:w-1/2 ${comanda.desactivada ? 'opacity-50 pointer-events-none' : ''}" data-comanda-id="${comanda.id}">
                             <div>
                                 <h3 class="text-lg font-semibold">Comanda #${comanda.id}</h3>
                                 <p><i class="fas fa-utensils"></i> Mesa: ${comanda.mesa.numero}</p>
@@ -87,7 +85,7 @@
                                     @csrf
                                     @method('PUT')
                                     <ul class="list-disc ml-6 mb-2">
-                                        ${comanda.productos.filter(producto => producto.categoria.nombre === 'Refrescos' || producto.categoria.nombre === 'Cafes').map(producto => `
+                                        ${comanda.productos.map(producto => `
                                             <li class="flex justify-between items-center mb-2">
                                                 <div class="flex items-center">
                                                     <select name="estado_preparacion_${producto.id}" class="block w-48 py-1 px-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
@@ -95,13 +93,13 @@
                                                         <option value="en_proceso" ${producto.pivot.estado_preparacion === 'en_proceso' ? 'selected' : ''}>En Proceso</option>
                                                         <option value="listo" ${producto.pivot.estado_preparacion === 'listo' ? 'selected' : ''}>Listo</option>
                                                     </select>
-                                                    <span class="ml-4">x${producto.pivot.cantidad} ${producto.nombre} - ${producto.pivot.especificaciones || 'Ninguna'}</span>
+                                                    <span class="ml-4">x${producto.pivot.cantidad} ${producto.nombre} - ${producto.pivot.especificaciones}</span>
                                                 </div>
                                             </li>
                                         `).join('')}
                                     </ul>
                                     <div class="flex justify-between items-center mt-4">
-                                        <button type="submit" class="btn-guardar px-4 py-2 bg-green-500 hover:bg-green-700 rounded-md text-white font-bold">Guardar Cambios</button>
+                                        <button type="submit" class="mt-6 px-4 py-2 bg-green-500 hover:bg-green-700 rounded-md text-white font-bold">Guardar Cambios</button>
                                     </div>
                                 </form>
                             </div>

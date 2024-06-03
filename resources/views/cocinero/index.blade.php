@@ -30,9 +30,7 @@
                             @csrf
                             @method('PUT')
                             <ul class="list-disc ml-6 mb-2">
-                                @foreach ($comanda->productos->reject(function ($producto) {
-                                return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
-                                }) as $producto)
+                                @foreach ($comanda->productos as $producto)
                                 <li class="flex justify-between items-center mb-2">
                                     <div class="flex items-center">
                                         <select name="estado_preparacion_{{ $producto->id }}" class="block w-48 py-1 px-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
@@ -79,11 +77,11 @@
                                     @csrf
                                     @method('PUT')
                                     <ul class="list-disc ml-6 mb-2">
-                                        ${comanda.productos.filter(producto => producto.categoria.nombre !== 'Refrescos' && producto.categoria.nombre !== 'Cafes').map(producto => `
+                                        ${comanda.productos.map(producto => `
                                             <li class="flex justify-between items-center mb-2">
                                                 <div class="flex items-center">
                                                     <select name="estado_preparacion_${producto.id}" class="block w-48 py-1 px-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                                        <option value="pendiente" ${producto.pivot.estado_preparacion === 'pendiente' ? 'selected' : ''}                                                    >Pendiente</option>
+                                                        <option value="pendiente" ${producto.pivot.estado_preparacion === 'pendiente' ? 'selected' : ''}>Pendiente</option>
                                                         <option value="en_proceso" ${producto.pivot.estado_preparacion === 'en_proceso' ? 'selected' : ''}>En Proceso</option>
                                                         <option value="listo" ${producto.pivot.estado_preparacion === 'listo' ? 'selected' : ''}>Listo</option>
                                                     </select>
@@ -106,10 +104,6 @@
         }
 
         setInterval(recargarComandas, 10000);
-
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
     });
 </script>
 @endsection

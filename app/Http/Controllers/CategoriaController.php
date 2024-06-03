@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,40 +8,48 @@ class CategoriaController extends Controller
 {
     public function index()
     {
-        // Devolver las categorías en formato JSON para las solicitudes AJAX
-        $categorias = Categoria::all();
+        $categorias = Categoria::with('roles')->get();
         return response()->json(['categorias' => $categorias]);
     }
 
     public function store(Request $request)
     {
-        // Validar y crear la categoría
         $request->validate([
             'nombre' => 'required|string|max:255',
+            'roles' => 'required|array'
         ]);
 
-        $categoria = Categoria::create($request->all());
+        $categoria = Categoria::create($request->only('nombre'));
+        $categoria->roles()->sync($request->roles);
 
         return response()->json(['success' => true, 'categoria' => $categoria]);
     }
 
     public function update(Request $request, Categoria $categoria)
     {
-        // Validar y actualizar la categoría
         $request->validate([
             'nombre' => 'required|string|max:255',
+            'roles' => 'required|array'
         ]);
 
-        $categoria->update($request->all());
+        $categoria->update($request->only('nombre'));
+        $categoria->roles()->sync($request->roles);
 
         return response()->json(['success' => true, 'categoria' => $categoria]);
     }
 
-    public function destroy(Categoria $categoria)
+    public function destroy($id)
     {
-        // Eliminar la categoría
+        $categoria = Categoria::findOrFail($id);
+        $categoria->roles()->detach();
         $categoria->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    public function edit($id)
+    {
+        $categoria = Categoria::with('roles')->findOrFail($id);
+        return response()->json(['categoria' => $categoria]);
     }
 }

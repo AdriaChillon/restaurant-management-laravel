@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Categoria;
+use App\Models\Role;
 use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
@@ -13,7 +14,9 @@ class ProductoController extends Controller
     {
         $productos = Producto::with('categoria')->get();
         $categorias = Categoria::all();
-        return view('admin.productos.index', compact('productos', 'categorias'));
+        $categorias = Categoria::with('roles')->get();
+        $roles = Role::all();
+        return view('admin.productos.index', compact('productos', 'categorias', 'roles'));
     }
 
     public function create()

@@ -30,25 +30,25 @@ Route::get('/dashboard', function () {
 
 // Rutas accesibles por el admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    
+
     Route::get('/dashboardAdmin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     //Rutas para los roles
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
     Route::put('/roles/{user}/update', [RoleController::class, 'updateRoles'])->name('roles.update');
-    
+
     // Rutas para Producto
     Route::resource('productos', ProductoController::class);
-    
+
     // Rutas para Mesa
     Route::resource('mesas', MesaController::class);
-    
+
     // Rutas para Categoria
     Route::resource('categorias', CategoriaController::class);
-    
+
+
     // Rutas para Comanda
     Route::resource('comandas', ComandaController::class);
-
 });
 
 // Rutas para barra
@@ -85,4 +85,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -20,11 +20,10 @@
                         <ul class="list-disc ml-6 mb-2">
                             @foreach ($comanda->productos as $producto)
                             <li>x{{ $producto->pivot->cantidad }} {{ $producto->nombre }} -
-                                {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : ucfirst($producto->pivot->estado_preparacion) }}
+                            {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : ucfirst($producto->pivot->estado_preparacion) }} - {{ $producto->pivot->especificaciones ?? 'Ninguna' }}
                             </li>
                             @endforeach
                         </ul>
-                        <p><i class="fas fa-info-circle"></i> Especificaciones: {{ $producto->nombre }}: {{ $producto->pivot->especificaciones ?? 'Ninguna' }}</p>
                     </div>
                     <div class="flex justify-between items-center mt-4">
                         <a href="{{ route('camarero.edit', $comanda->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Editar</a>
@@ -54,14 +53,9 @@
                                     <p><i class="fas fa-euro-sign"></i> Total: ${comanda.precio_total.toFixed(2)}€</p>
                                     <ul class="list-disc ml-6 mb-2">
                                         ${comanda.productos.map(producto => `
-                                                <li>x${producto.pivot.cantidad} ${producto.nombre} - ${producto.pivot.estado_preparacion === 'en_proceso' ? 'En proceso' : capitalizeFirstLetter(producto.pivot.estado_preparacion)}</li>
+                                                <li>x${producto.pivot.cantidad} ${producto.nombre} - ${producto.pivot.estado_preparacion === 'en_proceso' ? 'En proceso' : capitalizeFirstLetter(producto.pivot.estado_preparacion)} - ${producto.pivot.especificaciones ?? 'Ninguna'}</li>
                                             `).join('')}
                                     </ul>
-                                    <p><i class="fas fa-info-circle"></i> Especificaciones:
-                                        ${comanda.productos.map(producto => `
-                                            ${producto.nombre}: ${producto.pivot.especificaciones ?? 'Ninguna'}
-                                        `).join('<br>')}
-                                    </p>
                                 </div>
                                 <div class="flex justify-between items-center mt-4">
                                     <a href="/camarero/${comanda.id}/edit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Editar</a>
