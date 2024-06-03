@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Comanda;
@@ -10,7 +11,7 @@ class CocineroController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $roles = $user->roles->pluck('id'); // Obtener los roles del usuario
+        $roles = $user->roles->pluck('id');
 
         $comandas = Comanda::with(['mesa', 'productos' => function ($query) use ($roles) {
             $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones')
@@ -20,9 +21,6 @@ class CocineroController extends Controller
                                 ->from('categoria_role')
                                 ->whereIn('role_id', $roles);
                       });
-                  })
-                  ->whereDoesntHave('categoria', function ($query) {
-                      $query->whereIn('nombre', ['Refrescos', 'Cafes']);
                   });
         }])->where('en_marcha', true)
             ->orderBy('en_marcha', 'desc')
@@ -35,7 +33,7 @@ class CocineroController extends Controller
     public function getActiveComandas()
     {
         $user = Auth::user();
-        $roles = $user->roles->pluck('id'); // Obtener los roles del usuario
+        $roles = $user->roles->pluck('id');
 
         $comandas = Comanda::with(['mesa', 'productos' => function ($query) use ($roles) {
             $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones')
@@ -45,9 +43,6 @@ class CocineroController extends Controller
                                 ->from('categoria_role')
                                 ->whereIn('role_id', $roles);
                       });
-                  })
-                  ->whereDoesntHave('categoria', function ($query) {
-                      $query->whereIn('nombre', ['Refrescos', 'Cafes']);
                   });
         }])->where('en_marcha', true)->get();
 

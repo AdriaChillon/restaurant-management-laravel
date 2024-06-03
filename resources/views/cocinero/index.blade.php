@@ -66,7 +66,7 @@
                     comandasContainer.innerHTML = '';
                     data.forEach(comanda => {
                         const comandaHtml = `
-                        <div class="border-2 border-[#253080] shadow-xl rounded-lg p-6 mb-4 mx-2 flex flex-col justify-between w-full md:w-1/2 lg:w-1/2 xl:w-1/2 ${comanda.desactivada ? 'opacity-50 pointer-events-none' : ''}" data-comanda-id="${comanda.id}">
+                        <div class="border-2 border-[#253080] shadow-xl rounded-lg p-6 mb-4 mx-2 flex flex-col justify-between w-full md:w-1/2 lg:w-1/2 xl:w-1/2" data-comanda-id="${comanda.id}">
                             <div>
                                 <h3 class="text-lg font-semibold">Comanda #${comanda.id}</h3>
                                 <p><i class="fas fa-utensils"></i> Mesa: ${comanda.mesa.numero}</p>
