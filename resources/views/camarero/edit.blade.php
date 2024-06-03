@@ -28,7 +28,7 @@
                 <button @click="open = !open" type="button" class="flex justify-between items-center w-full p-3 text-left text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
                     <span>{{ $categoria->nombre }}</span>
                     <svg class="w-5 h-5" x-bind:class="{ 'transform rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </button>
                 <div x-show="open" class="mt-2 bg-white shadow overflow-hidden rounded-md">
@@ -36,11 +36,19 @@
                         @foreach ($categoria->productos as $producto)
                         <li class="p-3 flex justify-between items-center">
                             <div class="flex items-center">
-                                <input type="number" name="productos[{{ $producto->id }}]" value="{{ $comanda->productos->find($producto->id)->pivot->cantidad ?? 0 }}" min="0" class="form-input w-16 text-right mr-2" id="producto{{ $producto->id }}">
-                                <label class="ml-3 text-sm text-gray-600" for="producto{{ $producto->id }}">
-                                    {{ $producto->nombre }}
-                                </label>
+                                <input type="number" name="productos[{{ $producto->id }}]" value="{{ $comanda->productos->find($producto->id)->pivot->cantidad ?? 0 }}" min="0" class="form-input w-16 text-center" id="producto{{ $producto->id }}">
+                                <div class="ml-3 flex">
+                                    <button type="button" onclick="decreaseQuantity('{{ $producto->id }}')" class="focus:outline-none">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" onclick="increaseQuantity('{{ $producto->id }}')" class="ml-2 focus:outline-none">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
+                            <label class="ml-3 text-sm text-gray-600" for="producto{{ $producto->id }}">
+                                {{ $producto->nombre }}
+                            </label>
                             <span class="text-sm font-semibold text-gray-900">{{ number_format($producto->precio, 2) }}€</span>
                         </li>
                         @endforeach
@@ -57,4 +65,18 @@
     </form>
     @vite('resources/js/app.js')
 </div>
+
+<script>
+    function decreaseQuantity(id) {
+        let input = document.getElementById('producto' + id);
+        if (input.value > 0) {
+            input.value--;
+        }
+    }
+
+    function increaseQuantity(id) {
+        let input = document.getElementById('producto' + id);
+        input.value++;
+    }
+</script>
 @endsection

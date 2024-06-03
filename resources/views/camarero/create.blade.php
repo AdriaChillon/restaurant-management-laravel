@@ -41,11 +41,19 @@
                         @foreach ($categoria->productos as $producto)
                         <li class="p-3 flex justify-between items-center">
                             <div class="flex items-center">
-                                <input type="number" name="productos[{{ $producto->id }}]" value="0" min="0" class="form-input w-16 text-right mr-2" id="producto{{ $producto->id }}">
-                                <label class="ml-3 text-sm text-gray-600" for="producto{{ $producto->id }}">
-                                    {{ $producto->nombre }}
-                                </label>
+                                <input type="number" name="productos[{{ $producto->id }}]" value="0" min="0" class="form-input w-16 text-center" id="producto{{ $producto->id }}">
+                                <div class="ml-3 flex">
+                                    <button type="button" onclick="decreaseQuantity('{{ $producto->id }}')" class="focus:outline-none">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" onclick="increaseQuantity('{{ $producto->id }}')" class="ml-2 focus:outline-none">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
+                            <label class="ml-3 text-sm text-gray-600" for="producto{{ $producto->id }}">
+                                {{ $producto->nombre }}
+                            </label>
                             <span class="text-sm font-semibold text-gray-900">{{ number_format($producto->precio, 2) }}€</span>
                         </li>
                         @endforeach
@@ -60,4 +68,18 @@
         </div>
     </form>
 </div>
+
+<script>
+    function decreaseQuantity(id) {
+        let input = document.getElementById('producto' + id);
+        if (input.value > 0) {
+            input.value--;
+        }
+    }
+
+    function increaseQuantity(id) {
+        let input = document.getElementById('producto' + id);
+        input.value++;
+    }
+</script>
 @endsection
