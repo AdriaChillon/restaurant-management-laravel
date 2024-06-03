@@ -10,6 +10,7 @@ use App\Http\Controllers\ComandaController;
 use App\Http\Controllers\MesaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleCheckController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+Route::get('/check-role', [RoleCheckController::class, 'checkRole'])->name('check.role');
 
 // Rutas accesibles por el admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
