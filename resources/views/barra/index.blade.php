@@ -27,9 +27,9 @@
                         <div>
                             <h3 class="text-lg font-semibold">Comanda #{{ $comanda->id }}</h3>
                             <p><i class="fas fa-utensils"></i> Mesa: {{ $comanda->mesa->numero }}</p>
-                            <p><i class="fas fa-clock"></i> Fecha y Hora: {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
+                            <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
                             <p><i class="fas fa-euro-sign"></i> Total: {{ number_format($comanda->precio_total, 2) }}€</p>
-                            <p class="font-semibold mb-1">Productos (Refrescos y Cafés):</p>
+                            <p class="font-semibold mb-1">Productos:</p>
                             <form action="{{ route('barra.actualizarEstadoProductos', $comanda->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
@@ -44,7 +44,7 @@
                                                     <option value="en_proceso" @if ($producto->pivot->estado_preparacion === 'en_proceso') selected @endif>En Proceso</option>
                                                     <option value="listo" @if ($producto->pivot->estado_preparacion === 'listo') selected @endif>Listo</option>
                                                 </select>
-                                                <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }} - {{ ucfirst($producto->pivot->estado_preparacion) }}</span>
+                                                <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }}</span>
                                             </div>
                                         </li>
                                     @endforeach
@@ -83,9 +83,9 @@
                             <div>
                                 <h3 class="text-lg font-semibold">Comanda #${comanda.id}</h3>
                                 <p><i class="fas fa-utensils"></i> Mesa: ${comanda.mesa.numero}</p>
-                                <p><i class="fas fa-clock"></i> Fecha y Hora: ${moment(comanda.fecha_hora).format('DD/MM/YYYY HH:mm')}</p>
+                                <p><i class="fas fa-clock"></i> ${moment(comanda.fecha_hora).format('DD/MM/YYYY HH:mm')}</p>
                                 <p><i class="fas fa-euro-sign"></i> Total: ${comanda.precio_total.toFixed(2)}€</p>
-                                <p class="font-semibold mb-1">Productos (Refrescos y Cafés):</p>
+                                <p class="font-semibold mb-1">Productos:</p>
                                 <form action="/barra/comanda/${comanda.id}/actualizar-productos" method="POST">
                                     @csrf
                                     @method('PUT')
@@ -98,13 +98,13 @@
                                                         <option value="en_proceso" ${producto.pivot.estado_preparacion === 'en_proceso' ? 'selected' : ''}>En Proceso</option>
                                                         <option value="listo" ${producto.pivot.estado_preparacion === 'listo' ? 'selected' : ''}>Listo</option>
                                                     </select>
-                                                    <span class="ml-4">x${producto.pivot.cantidad} ${producto.nombre} - ${capitalizeFirstLetter(producto.pivot.estado_preparacion)}</span>
+                                                    <span class="ml-4">x${producto.pivot.cantidad} ${producto.nombre}}</span>
                                                 </div>
                                             </li>
                                         `).join('')}
                                     </ul>
                                     <div class="flex justify-between items-center mt-4">
-                                        <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md text-white font-bold">Guardar Cambios</button>
+                                        <button type="submit" class="px-4 py-2 bg-green-500 hover:bg-green-700 rounded-md text-white font-bold">Guardar Cambios</button>
                                     </div>
                                 </form>
                             </div>

@@ -28,7 +28,7 @@
                     <div>
                         <h3 class="text-lg font-semibold">Comanda #{{ $comanda->id }}</h3>
                         <p><i class="fas fa-utensils"></i> Mesa: {{ $comanda->mesa->numero }}</p>
-                        <p><i class="fas fa-clock"></i> Fecha y Hora: {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
+                        <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
                         <p><i class="fas fa-euro-sign"></i> Total: {{ number_format($comanda->precio_total, 2) }}€</p>
                         <p class="font-semibold mb-1">Productos:</p>
                         <form action="{{ route('cocinero.actualizarEstadoProductos', $comanda->id) }}" method="POST">
@@ -45,7 +45,7 @@
                                             <option value="en_proceso" @if ($producto->pivot->estado_preparacion === 'en_proceso') selected @endif>En Proceso</option>
                                             <option value="listo" @if ($producto->pivot->estado_preparacion === 'listo') selected @endif>Listo</option>
                                         </select>
-                                        <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }} - {{ ucfirst($producto->pivot->estado_preparacion) }}</span>
+                                        <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }}</span>
                                     </div>
                                 </li>
                                 @endforeach
