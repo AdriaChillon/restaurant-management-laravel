@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Categoria;
+use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
@@ -33,55 +34,43 @@ class ProductoController extends Controller
             'nombre' => 'required|string|max:255',
             'precio' => 'required|numeric',
             'descripcion' => 'nullable|string',
-            'categoria_id' => 'required|integer|exists:categorias,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Permitir que la imagen sea opcional
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|max:2048',
         ]);
-    
-        $producto = new Producto();
-        $producto->nombre = $request->nombre;
-        $producto->precio = $request->precio;
-        $producto->descripcion = $request->descripcion;
-        $producto->categoria_id = $request->categoria_id;
-    
-        // Procesar la imagen enviada por el usuario
+
+        $data = $request->all();
+
         if ($request->hasFile('imagen')) {
-            $imageName = time().'.'.$request->imagen->extension();
-            $request->imagen->storeAs('public/images', $imageName); // Almacenar la imagen en el storage de Laravel
-            $producto->imagen = $imageName;
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
-    
-        // Guardar el producto en la base de datos
-        $producto->save();
-    
-        return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
+
+        Producto::create($data);
+
+        return redirect()->route('productos.index')->with('success', 'Producto agregado con éxito.');
     }
-    
+
     public function update(Request $request, Producto $producto)
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
             'precio' => 'required|numeric',
             'descripcion' => 'nullable|string',
-            'categoria_id' => 'required|integer|exists:categorias,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Permitir que la imagen sea opcional
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|max:2048',
         ]);
-    
-        $producto->nombre = $request->nombre;
-        $producto->precio = $request->precio;
-        $producto->descripcion = $request->descripcion;
-        $producto->categoria_id = $request->categoria_id;
-    
-        // Procesar la imagen enviada por el usuario
+
+        $data = $request->all();
+
         if ($request->hasFile('imagen')) {
-            $imageName = time().'.'.$request->imagen->extension();
-            $request->imagen->storeAs('public/images', $imageName); // Almacenar la imagen en el storage de Laravel
-            $producto->imagen = $imageName;
+            if ($producto->imagen) {
+                Storage::disk('public')->delete($producto->imagen);
+            }
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
-    
-        // Guardar los cambios en el producto
-        $producto->save();
-    
-        return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
+
+        $producto->update($data);
+
+        return redirect()->route('productos.index')->with('success', 'Producto actualizado con éxito.');
     }
 
     public function destroy(Producto $producto)

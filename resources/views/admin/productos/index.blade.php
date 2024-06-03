@@ -14,7 +14,7 @@
                     <th class="py-3 px-6 text-left">Nombre</th>
                     <th class="py-3 px-6 text-left">Precio</th>
                     <th class="py-3 px-6 text-left">Descripción</th>
-                    <!-- <th class="py-3 px-6 text-left">Imagen</th> -->
+                    <th class="py-3 px-6 text-left">Imagen</th>
                     <th class="py-3 px-6 text-left">Categoría</th>
                     <th class="py-3 px-6 text-center">Acciones</th>
                 </tr>
@@ -25,13 +25,13 @@
                     <td class="py-3 px-6 text-left">{{ $producto->nombre }}</td>
                     <td class="py-3 px-6 text-left">{{ $producto->precio }}</td>
                     <td class="py-3 px-6 text-left">{{ $producto->descripcion }}</td>
-                    <!-- <td class="py-3 px-6 text-left">
+                    <td class="py-3 px-6 text-left">
                         @if ($producto->imagen)
                         <img src="{{ asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" class="h-20 w-20 object-cover rounded-lg">
                         @else
                         <span>No hay imagen disponible</span>
                         @endif
-                    </td> -->
+                    </td>
                     <td class="py-3 px-6 text-left">{{ $producto->categoria->nombre }}</td>
                     <td class="py-3 px-6 text-center">
                         <div class="flex justify-center items-center">
