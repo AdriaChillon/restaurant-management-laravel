@@ -28,19 +28,6 @@ class CocineroController extends Controller
         return response()->json($comandas);
     }
 
-    public function manejarComanda(Comanda $comanda)
-    {
-        // Cargar la relación de productos con sus categorías
-        $comanda->load('productos.categoria');
-
-        // Filtrar los productos que no sean de la categoría "Refrescos" o "Cafés"
-        $productosFiltrados = $comanda->productos->reject(function ($producto) {
-            return $producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes';
-        });
-
-        return view('cocinero.manejar_comanda', compact('comanda', 'productosFiltrados'));
-    }
-
     public function actualizarEstadoProductos(Request $request, Comanda $comanda)
     {
         foreach ($comanda->productos as $producto) {

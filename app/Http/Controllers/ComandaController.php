@@ -13,8 +13,21 @@ class ComandaController extends Controller
         $comandas = Comanda::with('mesa');
 
         // Filtrar por fecha si se proporciona
-        if ($request->has('fecha')) {
+        if ($request->has('fecha') && $request->fecha) {
             $comandas->whereDate('fecha_hora', $request->fecha);
+        }
+
+        // Filtrar por mesa si se proporciona
+        if ($request->has('mesa_id') && $request->mesa_id) {
+            $comandas->where('mesa_id', $request->mesa_id);
+        }
+
+        // Filtrar por precio si se proporciona
+        if ($request->has('precio_min') && $request->precio_min) {
+            $comandas->where('precio_total', '>=', $request->precio_min);
+        }
+        if ($request->has('precio_max') && $request->precio_max) {
+            $comandas->where('precio_total', '<=', $request->precio_max);
         }
 
         $comandas = $comandas->get();

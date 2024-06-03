@@ -63,13 +63,10 @@ Route::middleware(['auth', 'role:barra|admin'])->group(function () {
 // Rutas para cocina
 Route::middleware(['auth', 'role:cocina|admin'])->group(function () {
     Route::get('/cocinero', [CocineroController::class, 'index'])->name('cocinero.index');
-    Route::put('/cocinero/{id}/cambiarEstado', [CocineroController::class, 'cambiarEstado'])->name('cocinero.cambiarEstado');
-    Route::post('/comanda-updated', [CocineroController::class, 'handleComandaUpdated'])->name('comanda.updated');
-    Route::get('/cocinero/manejar-comanda/{comanda}', [CocineroController::class, 'manejarComanda'])->name('cocinero.manejarComanda');
-    Route::put('/cocinero/comanda/{comanda}/actualizar-productos',[CocineroController::class, 'actualizarEstadoProductos'])->name('cocinero.actualizarEstadoProductos');
-    Route::get('cocinero/getActiveComandas', [CocineroController::class, 'getActiveComandas'])->name('cocinero.getActiveComandas');
-
+    Route::put('/cocinero/comanda/{comanda}/actualizar-productos', [CocineroController::class, 'actualizarEstadoProductos'])->name('cocinero.actualizarEstadoProductos');
+    Route::get('/cocinero/getActiveComandas', [CocineroController::class, 'getActiveComandas'])->name('cocinero.getActiveComandas');
 });
+
 
 // Rutas para camarero
 Route::middleware(['auth', 'role:camarero|admin'])->group(function () {

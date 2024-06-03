@@ -4,10 +4,31 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-semibold mb-8">Comandas</h1>
     <div class="mb-4">
-        <form action="{{ route('comandas.index') }}" method="GET" class="flex items-center">
-            <label for="fecha" class="mr-2">Buscar por fecha:</label>
-            <input type="date" id="fecha" name="fecha" value="{{ request()->input('fecha') }}" class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2 mr-2">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Buscar</button>
+        <form action="{{ route('comandas.index') }}" method="GET" class="flex flex-wrap items-center space-x-4">
+            <div>
+                <label for="fecha" class="block text-sm font-medium text-gray-700">Buscar por fecha:</label>
+                <input type="date" id="fecha" name="fecha" value="{{ request()->input('fecha') }}" class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2">
+            </div>
+            <div>
+                <label for="mesa_id" class="block text-sm font-medium text-gray-700">Mesa:</label>
+                <select id="mesa_id" name="mesa_id" class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2">
+                    <option value="">Todas</option>
+                    @foreach($mesas as $mesa)
+                        <option value="{{ $mesa->id }}" @if(request()->input('mesa_id') == $mesa->id) selected @endif>{{ $mesa->numero }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label for="precio_min" class="block text-sm font-medium text-gray-700">Precio mínimo:</label>
+                <input type="number" step="0.01" id="precio_min" name="precio_min" value="{{ request()->input('precio_min') }}" class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2">
+            </div>
+            <div>
+                <label for="precio_max" class="block text-sm font-medium text-gray-700">Precio máximo:</label>
+                <input type="number" step="0.01" id="precio_max" name="precio_max" value="{{ request()->input('precio_max') }}" class="border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 rounded-md px-4 py-2">
+            </div>
+            <div class="self-end">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-6">Buscar</button>
+            </div>
         </form>
     </div>
     <table class="min-w-full bg-white border border-gray-200">
