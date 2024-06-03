@@ -16,7 +16,7 @@
                             <div>
                                 <h3 class="text-lg font-semibold">Comanda #{{ $comanda->id }}</h3>
                                 <p><i class="fas fa-utensils"></i> Mesa: {{ $comanda->mesa->numero }}</p>
-                                <p><i class="fas fa-clock"></i> Fecha y Hora: {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
+                                <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
                                 <p><i class="fas fa-euro-sign"></i> Total: {{ number_format($comanda->precio_total, 2) }}€</p>
                                 <ul class="list-disc ml-6 mb-2">
                                     @foreach ($comanda->productos as $producto)
@@ -51,7 +51,7 @@
                                 <div>
                                     <h3 class="text-lg font-semibold">Comanda #${comanda.id}</h3>
                                     <p><i class="fas fa-utensils"></i> Mesa: ${comanda.mesa.numero}</p>
-                                    <p><i class="fas fa-clock"></i> Fecha y Hora: ${moment(comanda.fecha_hora).format('DD/MM/YYYY HH:mm')}</p>
+                                    <p><i class="fas fa-clock"></i> ${moment(comanda.fecha_hora).format('DD/MM/YYYY HH:mm')}</p>
                                     <p><i class="fas fa-euro-sign"></i> Total: ${comanda.precio_total.toFixed(2)}€</p>
                                     <ul class="list-disc ml-6 mb-2">
                                         ${comanda.productos.map(producto => `
