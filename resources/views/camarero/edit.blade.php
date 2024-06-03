@@ -46,6 +46,11 @@
                                     </button>
                                 </div>
                             </div>
+                            @if ($producto->imagen)
+                            <img src="{{ asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" class="ml-3 h-20 w-20 object-cover rounded-lg">
+                            @else
+                            <p class="ml-3 text-gray-600"></p>
+                            @endif
                             <label class="ml-3 text-sm text-gray-600" for="producto{{ $producto->id }}">
                                 {{ $producto->nombre }}
                             </label>

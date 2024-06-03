@@ -33,7 +33,7 @@
                 <button @click="open = !open" type="button" class="flex justify-between items-center w-full p-3 text-left text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
                     <span>{{ $categoria->nombre }}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 011.414 0L10 12.586l3.293-2.879a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 011.414 0L10 12.586l3.293-2.879a1 1 0 011.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </button>
                 <div x-show="open" class="mt-2 bg-white shadow overflow-hidden rounded-md">
@@ -51,12 +51,16 @@
                                     </button>
                                 </div>
                             </div>
+                            @if ($producto->imagen)
+                            <img src="{{ asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" class="ml-3 h-20 w-20 object-cover rounded-lg">
+                            @else
+                            <p class="ml-3 text-gray-600"></p>
+                            @endif
                             <label class="ml-3 text-sm text-gray-600" for="producto{{ $producto->id }}">
                                 {{ $producto->nombre }}
                             </label>
                             <span class="text-sm font-semibold text-gray-900">{{ number_format($producto->precio, 2) }}€</span>
                             <textarea name="especificaciones[{{ $producto->id }}]" id="especificaciones{{ $producto->id }}" class="form-input mt-1 block w-full sm:w-40 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="2" placeholder="Ingrese las especificaciones"></textarea>
-
                         </li>
                         @endforeach
                     </ul>
