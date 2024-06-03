@@ -102,28 +102,36 @@ class CamareroController extends Controller
     }
     
 
-    // Actualiza una comanda existente
     public function update(Request $request, $id)
     {
         $comanda = Comanda::findOrFail($id);
         $comanda->mesa_id = $request->mesa_id;
         $comanda->save();
-
+    
+        // Obtener el estado actual de los productos
+        $productosExistentes = $comanda->productos->keyBy('id');
+    
+        // Eliminar los productos actuales
         $comanda->productos()->detach();
-
+    
         $precio_total = 0;
         foreach ($request->productos as $producto_id => $cantidad) {
             if ($cantidad > 0) {
                 $producto = Producto::find($producto_id);
-                $comanda->productos()->attach($producto_id, ['cantidad' => $cantidad, 'precio' => $producto->precio]);
+                // Obtener el estado de preparación actual del producto o establecer 'pendiente' si no existe
+                $estadoPreparacion = $productosExistentes->has($producto_id) ? $productosExistentes[$producto_id]->pivot->estado_preparacion : 'pendiente';
+                // Adjuntar el producto con el estado de preparación correcto
+                $comanda->productos()->attach($producto_id, ['cantidad' => $cantidad, 'precio' => $producto->precio, 'estado_preparacion' => $estadoPreparacion]);
                 $precio_total += $producto->precio * $cantidad;
             }
         }
-
+    
         $comanda->precio_total = $precio_total;
         $comanda->save();
-        
+    
         event(new ComandaUpdated($comanda));
         return redirect()->route('camarero.index')->with('success', 'Comanda actualizada con éxito.');
     }
+    
+    
 }
