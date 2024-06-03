@@ -8,6 +8,8 @@ use App\Models\Mesa;
 use App\Models\Producto;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // Agrega esta línea al inicio del archivo para utilizar DB facade
+
 
 class CamareroController extends Controller
 {
@@ -15,11 +17,12 @@ class CamareroController extends Controller
     public function index()
     {
         $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
-            $query->withPivot('cantidad', 'estado_preparacion');
+            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones'); // Incluye las especificaciones
         }])->where('pagado', false)->get();
     
         return view('camarero.index', compact('comandas'));
     }
+    
     
     // Devuelve las comandas activas en formato JSON hasta que sean pagadas
     public function getActiveComandas()
@@ -40,57 +43,6 @@ class CamareroController extends Controller
         $categorias = Categoria::with('productos')->get();
         return view('camarero.create', compact('mesas', 'categorias'));
     }
-    
-
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'mesa_id' => 'required|integer|exists:mesas,id',
-            'productos.*' => 'integer|min:0',
-        ]);
-
-        // Verificar si ya existe una comanda no pagada para la mesa especificada
-        $existingComanda = Comanda::where('mesa_id', $validatedData['mesa_id'])
-                                    ->where('pagado', false)
-                                    ->first();
-
-        if ($existingComanda) {
-            return redirect()->back()->with('error', 'No se puede crear una nueva comanda para esta mesa porque ya existe una comanda en proceso.');
-        }
-
-        // Verificar si al menos un producto está seleccionado
-        $productosSeleccionados = array_filter($request->productos, function ($cantidad) {
-            return $cantidad > 0;
-        });
-
-        if (empty($productosSeleccionados)) {
-            return redirect()->back()->with('error', 'Debe seleccionar al menos un producto.');
-        }
-
-        $comanda = new Comanda([
-            'mesa_id' => $validatedData['mesa_id'],
-            'fecha_hora' => now(),
-            'en_marcha' => true,
-            'precio_total' => 0,
-        ]);
-        $comanda->save();
-
-        $precio_total = 0;
-        foreach ($productosSeleccionados as $producto_id => $cantidad) {
-            $producto = Producto::find($producto_id);
-            $comanda->productos()->attach($producto_id, [
-                'cantidad' => $cantidad,
-                'precio' => $producto->precio
-            ]);
-            $precio_total += $producto->precio * $cantidad;
-        }
-
-        $comanda->precio_total = $precio_total;
-        $comanda->save();
-
-        event(new ComandaUpdated($comanda));
-        return redirect()->route('camarero.index')->with('success', 'Comanda creada con éxito.');
-    }
 
     public function edit($id)
     {
@@ -101,37 +53,100 @@ class CamareroController extends Controller
         return view('camarero.edit', compact('comanda', 'mesas', 'categorias'));
     }
     
-
-    public function update(Request $request, $id)
+    public function store(Request $request)
     {
-        $comanda = Comanda::findOrFail($id);
-        $comanda->mesa_id = $request->mesa_id;
-        $comanda->save();
+        $validatedData = $request->validate([
+            'mesa_id' => 'required|integer|exists:mesas,id',
+            'productos.*' => 'integer|min:0',
+            'especificaciones.*' => 'nullable|string|max:255', // Cambiar a string
+        ]);
     
-        // Obtener el estado actual de los productos
-        $productosExistentes = $comanda->productos->keyBy('id');
+        try {
+            DB::beginTransaction();
     
-        // Eliminar los productos actuales
-        $comanda->productos()->detach();
+            // Crear la comanda
+            $comanda = Comanda::create([
+                'mesa_id' => $validatedData['mesa_id'],
+                'fecha_hora' => now(),
+                'en_marcha' => true,
+                'precio_total' => 0,
+            ]);
     
-        $precio_total = 0;
-        foreach ($request->productos as $producto_id => $cantidad) {
-            if ($cantidad > 0) {
-                $producto = Producto::find($producto_id);
-                // Obtener el estado de preparación actual del producto o establecer 'pendiente' si no existe
-                $estadoPreparacion = $productosExistentes->has($producto_id) ? $productosExistentes[$producto_id]->pivot->estado_preparacion : 'pendiente';
-                // Adjuntar el producto con el estado de preparación correcto
-                $comanda->productos()->attach($producto_id, ['cantidad' => $cantidad, 'precio' => $producto->precio, 'estado_preparacion' => $estadoPreparacion]);
-                $precio_total += $producto->precio * $cantidad;
+            // Calcular el precio total y asociar los productos con sus cantidades y especificaciones
+            $precio_total = 0;
+            foreach ($validatedData['productos'] as $producto_id => $cantidad) {
+                if ($cantidad > 0) {
+                    $producto = Producto::find($producto_id);
+                    $especificaciones = $validatedData['especificaciones'][$producto_id] ?? ''; // Obtener las especificaciones para este producto
+                    $comanda->productos()->attach($producto_id, [
+                        'cantidad' => $cantidad,
+                        'precio' => $producto->precio,
+                        'especificaciones' => $especificaciones,
+                    ]);
+                    $precio_total += $producto->precio * $cantidad;
+                }
             }
+    
+            // Actualizar el precio total de la comanda y guardar los cambios
+            $comanda->precio_total = $precio_total;
+            $comanda->save();
+    
+            DB::commit();
+    
+            event(new ComandaUpdated($comanda));
+    
+            return redirect()->route('camarero.index')->with('success', 'Comanda creada con éxito.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Error al crear la comanda: ' . $e->getMessage());
         }
-    
-        $comanda->precio_total = $precio_total;
-        $comanda->save();
-    
-        event(new ComandaUpdated($comanda));
-        return redirect()->route('camarero.index')->with('success', 'Comanda actualizada con éxito.');
     }
     
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'mesa_id' => 'required|integer|exists:mesas,id',
+            'productos.*' => 'integer|min:0',
+            'especificaciones.*' => 'nullable|string|max:255', // Cambiar a string
+        ]);
     
+        try {
+            DB::beginTransaction();
+    
+            // Obtener la comanda a editar
+            $comanda = Comanda::findOrFail($id);
+            $comanda->mesa_id = $validatedData['mesa_id'];
+    
+            // Eliminar todos los productos asociados a la comanda
+            $comanda->productos()->detach();
+    
+            // Calcular el precio total y asociar los productos con sus cantidades y especificaciones
+            $precio_total = 0;
+            foreach ($validatedData['productos'] as $producto_id => $cantidad) {
+                if ($cantidad > 0) {
+                    $producto = Producto::find($producto_id);
+                    $especificaciones = $validatedData['especificaciones'][$producto_id] ?? ''; // Obtener las especificaciones para este producto
+                    $comanda->productos()->attach($producto_id, [
+                        'cantidad' => $cantidad,
+                        'precio' => $producto->precio,
+                        'especificaciones' => $especificaciones,
+                    ]);
+                    $precio_total += $producto->precio * $cantidad;
+                }
+            }
+    
+            // Actualizar el precio total de la comanda y guardar los cambios
+            $comanda->precio_total = $precio_total;
+            $comanda->save();
+    
+            DB::commit();
+    
+            event(new ComandaUpdated($comanda));
+    
+            return redirect()->route('camarero.index')->with('success', 'Comanda actualizada con éxito.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Error al actualizar la comanda: ' . $e->getMessage());
+        }
+    }    
 }

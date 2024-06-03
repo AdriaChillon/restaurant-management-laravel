@@ -55,6 +55,8 @@
                                 {{ $producto->nombre }}
                             </label>
                             <span class="text-sm font-semibold text-gray-900">{{ number_format($producto->precio, 2) }}€</span>
+                            <textarea name="especificaciones[{{ $producto->id }}]" id="especificaciones{{ $producto->id }}" class="form-input mt-1 block w-full sm:w-40 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="2" placeholder="Ingrese las especificaciones"></textarea>
+
                         </li>
                         @endforeach
                     </ul>

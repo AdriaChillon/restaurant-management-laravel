@@ -10,7 +10,9 @@ class CocineroController extends Controller
     // Muestra todas las comandas activas y completadas, ordenadas
     public function index()
     {
-        $comandas = Comanda::where('en_marcha', true)
+        $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
+            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones');
+        }])->where('en_marcha', true)
             ->orderBy('en_marcha', 'desc')
             ->orderBy('updated_at', 'asc')
             ->get();
@@ -22,7 +24,7 @@ class CocineroController extends Controller
     public function getActiveComandas()
     {
         $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
-            $query->withPivot('cantidad', 'estado_preparacion');
+            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones');
         }])->where('en_marcha', true)->get();
 
         return response()->json($comandas);

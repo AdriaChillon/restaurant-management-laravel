@@ -9,14 +9,17 @@ class BarraController extends Controller
 {
     public function index()
     {
-        $comandas = Comanda::where('pagado', false)->get();
+        $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
+            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones');
+        }])->where('pagado', false)->get();
+
         return view('barra.index', compact('comandas'));
     }
 
     public function getPendingComandas()
     {
         $comandas = Comanda::with(['mesa', 'productos' => function ($query) {
-            $query->withPivot('cantidad', 'estado_preparacion');
+            $query->withPivot('cantidad', 'estado_preparacion', 'especificaciones');
         }])->where('pagado', false)->get();
 
         return response()->json($comandas);
@@ -58,7 +61,6 @@ class BarraController extends Controller
             if ($producto->categoria->nombre === 'Refrescos' || $producto->categoria->nombre === 'Cafes') {
                 if ($request->has('estado_preparacion_' . $producto->id)) {
                     $estadoPreparacion = $request->input('estado_preparacion_' . $producto->id);
-                    \Log::info('Actualizando producto ID: ' . $producto->id . ' con estado: ' . $estadoPreparacion); // Log para depuración
                     $comanda->productos()->updateExistingPivot($producto->id, ['estado_preparacion' => $estadoPreparacion]);
                 }
             }

@@ -18,12 +18,7 @@
 
             <h1 class="text-2xl font-bold mb-4">Comandas Activas</h1>
             <div id="comandas-container" class="flex flex-wrap -mx-2">
-                @php
-                $comandas_activas = $comandas->where('desactivada', false);
-                $comandas_completadas = $comandas->where('desactivada', true);
-                @endphp
-
-                @foreach ($comandas_activas as $comanda)
+                @foreach ($comandas as $comanda)
                 <div class="border-2 border-[#253080] shadow-xl rounded-lg p-6 mb-4 mx-2 flex flex-col justify-between w-full md:w-1/2 lg:w-1/2 xl:w-1/2" data-comanda-id="{{ $comanda->id }}">
                     <div>
                         <h3 class="text-lg font-semibold">Comanda #{{ $comanda->id }}</h3>
@@ -45,7 +40,7 @@
                                             <option value="en_proceso" @if ($producto->pivot->estado_preparacion === 'en_proceso') selected @endif>En Proceso</option>
                                             <option value="listo" @if ($producto->pivot->estado_preparacion === 'listo') selected @endif>Listo</option>
                                         </select>
-                                        <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }}</span>
+                                        <span class="ml-4">x{{ $producto->pivot->cantidad }} {{ $producto->nombre }} - {{ $producto->pivot->especificaciones }}</span>
                                     </div>
                                 </li>
                                 @endforeach
@@ -54,26 +49,6 @@
                                 <button type="submit" class="mt-6 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md text-white font-bold">Guardar Cambios</button>
                             </div>
                         </form>
-                    </div>
-                </div>
-                @endforeach
-
-                @foreach ($comandas_completadas as $comanda)
-                <div class="border-2 border-[#253080] shadow-xl rounded-lg p-6 mb-4 mx-2 flex flex-col justify-between w-full md:w-1/2 lg:w-1/2 xl:w-1/2 opacity-50 pointer-events-none" data-comanda-id="{{ $comanda->id }}">
-                    <div>
-                        <h3 class="text-lg font-semibold">Comanda #{{ $comanda->id }}</h3>
-                        <p><i class="fas fa-utensils"></i> Mesa: {{ $comanda->mesa->numero }}</p>
-                        <p><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($comanda->fecha_hora)->format('d/m/Y H:i') }}</p>
-                        <p><i class="fas fa-euro-sign"></i> Total: {{ number_format($comanda->precio_total, 2) }}€</p>
-                        <p class="font-semibold mb-1">Productos:</p>
-                        <ul class="list-disc ml-6 mb-2">
-                            @foreach ($comanda->productos as $producto)
-                            <li>{{ $producto->nombre }} - Cantidad: {{ $producto->pivot->cantidad }} - Estado: {{ $producto->pivot->estado_preparacion === 'en_proceso' ? 'En proceso' : ucfirst($producto->pivot->estado_preparacion) }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    <div class="flex justify-between items-center mt-4">
-                        <button class="bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed" disabled>Gestionar Comanda</button>
                     </div>
                 </div>
                 @endforeach
@@ -108,11 +83,11 @@
                                             <li class="flex justify-between items-center mb-2">
                                                 <div class="flex items-center">
                                                     <select name="estado_preparacion_${producto.id}" class="block w-48 py-1 px-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                                        <option value="pendiente" ${producto.pivot.estado_preparacion === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                                                        <option value="pendiente" ${producto.pivot.estado_preparacion === 'pendiente' ? 'selected' : ''}                                                    >Pendiente</option>
                                                         <option value="en_proceso" ${producto.pivot.estado_preparacion === 'en_proceso' ? 'selected' : ''}>En Proceso</option>
                                                         <option value="listo" ${producto.pivot.estado_preparacion === 'listo' ? 'selected' : ''}>Listo</option>
                                                     </select>
-                                                    <span class="ml-4">x${producto.pivot.cantidad} ${producto.nombre} - ${capitalizeFirstLetter(producto.pivot.estado_preparacion)}</span>
+                                                    <span class="ml-4">x${producto.pivot.cantidad} ${producto.nombre} - ${producto.pivot.especificaciones}</span>
                                                 </div>
                                             </li>
                                         `).join('')}
