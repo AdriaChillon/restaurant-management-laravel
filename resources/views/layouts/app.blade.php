@@ -14,15 +14,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
-
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-white">
+    <div class="min-h-screen bg-gray-100">
         <!-- Navigation with Profile Info -->
-        <div class=" w-full mx-auto">
+        <div class="w-full mx-auto">
             @include('layouts.navigation') <!-- Assumption: Profile Info is part of this include -->
         </div>
 
